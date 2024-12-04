@@ -24,7 +24,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider>
             <SidebarProvider>
-              <div className="flex h-screen">
+              <div className="flex h-screen w-screen">
                 <AppSidebar />
                 <div className="flex-1 flex flex-col overflow-hidden">
                   <Header />
