@@ -18,7 +18,7 @@ import {
 const menuItems = [
   { icon: Home, label: 'Dashboard', href: '/' },
   { icon: FileText, label: 'Custom News', href: '/custom-news' },
-  { icon: TrendingUp, label: 'Trend Analysis', href: '/trend-analysis' },
+  { icon: TrendingUp, label: 'Trend Analysis', href: '/trendAnalysis' },
   { icon: Radio, label: 'Live Broadcast', href: '/live-broadcast' },
   { icon: Vote, label: 'Voting', href: '/voting' },
 ]
