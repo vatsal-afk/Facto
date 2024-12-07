@@ -10,10 +10,10 @@ const GUARDIAN_API_KEY = process.env.NEXT_PUBLIC_GUARDIAN_API_KEY;
 
 
 const sections = [
-  { title: "Featured News", category: "featured" },
-  { title: "Latest News", category: "latest" },
+  { title: "World News", category: "world" },
+  { title: "Latest News", category: "news" },
   { title: "Politics", category: "politics" },
-  { title: "Entertainment", category: "entertainment" },
+  { title: "Sports", category: "sport" },
   { title: "Science & Technology", category: "technology" },
 ];
 
@@ -32,7 +32,7 @@ const TrendAnalysis: React.FC = () => {
           const url = new URL("https://content.guardianapis.com/search");
           url.searchParams.append("api-key", GUARDIAN_API_KEY || "");
           url.searchParams.append("section", section.category);
-          url.searchParams.append("show-fields", "trailText");
+          url.searchParams.append("show-fields", "thumbnail,trailText");
           url.searchParams.append("page-size", "3");
 
           const response = await fetch(url.toString());
@@ -42,7 +42,7 @@ const TrendAnalysis: React.FC = () => {
             category: section.category,
             articles: data.response.results.map((article: any) => ({
               title: article.webTitle,
-            //   image: article.fields?.thumbnail || "/placeholder.svg?height=200&width=300",
+              image: article.fields?.thumbnail || "/placeholder.svg?height=200&width=300",
               description: article.fields?.trailText || "No description available",
               link: article.webUrl,
             })),
