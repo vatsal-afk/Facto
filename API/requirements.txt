@@ -9,3 +9,4 @@ spacy==3.6.1
 textstat==0.7.3
 numpy==1.25.2
 python-dotenv==1.0.0
+beautifulsoup4
