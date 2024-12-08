@@ -27,6 +27,14 @@ To install the Misinformation Detection System, follow these steps:
 
 ```npm install```
 
+4. Start the server:
+
+you might need to create a virtual env?
+
+```python -m spacy download en_core_web_sm```
+
+```pip install -r requirements.txt```
+
 ## Configuration
 
 1. Create a `.env.local` file in the root directory of the project.

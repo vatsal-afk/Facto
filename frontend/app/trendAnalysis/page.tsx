@@ -1,4 +1,4 @@
-import TrendAnalysis from "@/components/TrendAnalysis"
+import TrendAnalysis from "@/components/trend-analysis"
 
 export default function TrendAnalysisPage() {
   return (
