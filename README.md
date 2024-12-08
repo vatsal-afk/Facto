@@ -16,12 +16,12 @@ To install the Misinformation Detection System, follow these steps:
 
 1. Clone the repository:
 
-```git clone [https://github.com//TruthTell.git]```
+```git clone [https://github.com/vatsal-afk/TruthTell.git]```
 
 
 2. Navigate to the project directory:
 
-```cd misinformation-detection-system```
+```cd TruthTell```
 
 3. Install the dependencies:
 
@@ -39,16 +39,8 @@ you might need to create a virtual env?
 
 1. Create a `.env.local` file in the root directory of the project.
 
-2. Add the following environment variables to the `.env.local` file:
+2. Add the following environment variables to the `.env.local`.
 
-```NEXTAUTH_URL=[http://localhost:3000](http://localhost:3000)```
-```NEXTAUTH_SECRET=your_nextauth_secret```
-```GITHUB_ID=your_github_oauth_id```
-```GITHUB_SECRET=your_github_oauth_secret```
-
-Replace `your_nextauth_secret`, `your_github_oauth_id`, and `your_github_oauth_secret` with your actual values.
-
-3. If you're using other authentication providers or additional services, add their respective environment variables here as well.
 
 ## Running the Project
 
@@ -75,7 +67,3 @@ To run the Misinformation Detection System, follow these steps:
 ## Contributing
 
 If you want to contribute to this project, please fork the repository and create a pull request, or open an issue for discussion.
-
-## License
-
-This project uses the following license: [MIT License](https://opensource.org/licenses/MIT).
