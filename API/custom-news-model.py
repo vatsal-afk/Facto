@@ -19,7 +19,7 @@ load_dotenv(dotenv_path=env_path)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 # Guardian API Key (Add your API key here)
-guardian_api_key = os.env(GUARDIAN_API_KEY)
+guardian_api_key = os.getenv('GUARDIAN_API_KEY')
 
 # Summarization model setup
 summarizer_tokenizer = AutoTokenizer.from_pretrained("t5-small")
