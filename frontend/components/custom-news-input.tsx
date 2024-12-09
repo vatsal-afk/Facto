@@ -6,14 +6,29 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 
 export default function CustomNewsInput() {
-  const [title, setTitle] = useState('')
+  //const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [link, setLink] = useState('')
 
-  const handleNewsSubmit = (e: React.FormEvent) => {
+  const handleNewsSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: Implement news submission logic
-    console.log('Submitting news:', { title, content })
+    try {
+      const response = await fetch('http://127.0.0.1:5000/detect_fake_news', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ news_text: content }),
+      });
+
+      const result = await response.json();
+      console.log(result);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  
+    //console.log('Submitting news:', { title, content })
+    console.log('Submitting news:', { content })
   }
 
   const handleLinkSubmit = (e: React.FormEvent) => {
@@ -32,13 +47,13 @@ export default function CustomNewsInput() {
     <div className="space-y-6">
       <h1>Enter details:</h1>
       <form onSubmit={handleNewsSubmit} className="space-y-4">
-        <Input
+        {/* <Input
           type="text"
           placeholder="News Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
-        />
+        /> */}
         <Textarea
           placeholder="News Content"
           value={content}

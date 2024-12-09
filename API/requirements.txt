@@ -1,4 +1,12 @@
-dotenv
-flask
-transformers
+flask==2.2.5
+flask-cors==3.0.10
+requests==2.31.0
+# torch==2.0.1
 torch
+transformers==4.33.3
+sentence-transformers==2.2.2
+spacy==3.6.1
+textstat==0.7.3
+numpy==1.25.2
+python-dotenv==1.0.0
+beautifulsoup4
