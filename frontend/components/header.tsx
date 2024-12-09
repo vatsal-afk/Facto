@@ -1,12 +1,13 @@
 "use client"
 
-import { useSession, signIn, signOut } from "next-auth/react"
+// import { useSession, signIn, signOut } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons"
 import { useTheme } from "next-themes"
+import WalletComponent from '@/components/wallet'
 
 export default function Header() {
-  const { data: session } = useSession()
+  // const { data: session } = useSession()
   const { theme, setTheme } = useTheme()
 
   return (
@@ -25,14 +26,16 @@ export default function Header() {
           )}
           <span className="sr-only">Toggle theme</span>
         </Button>
-        {session ? (
+        <Button>Sign in</Button>
+        <WalletComponent />
+        {/* {session ? (
           <>
             <span>Signed in as {session.user?.email}</span>
             <Button onClick={() => signOut()}>Sign out</Button>
           </>
         ) : (
           <Button onClick={() => signIn()}>Sign in</Button>
-        )}
+        )} */}
       </div>
     </header>
   )

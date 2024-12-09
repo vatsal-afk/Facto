@@ -1,6 +1,6 @@
 import { Inter } from 'next/font/google'
 import { ThemeProvider } from "next-themes"
-import { AuthProvider } from "@/components/auth-provider"
+// import { AuthProvider } from "@/components/auth-provider"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import Header from '@/components/header'
 import AppSidebar from '@/components/sidebar'
@@ -22,7 +22,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <AuthProvider>
+          {/* <AuthProvider> */}
             <SidebarProvider>
               <div className="flex h-screen w-screen">
                 <AppSidebar />
@@ -34,7 +34,7 @@ export default function RootLayout({
                 </div>
               </div>
             </SidebarProvider>
-          </AuthProvider>
+          {/* </AuthProvider> */}
         </ThemeProvider>
       </body>
     </html>

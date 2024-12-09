@@ -1,51 +1,19 @@
-// DO NOT MODIFY THIS AS THIS CONTAINS CODE FOR THE GRAPH ELEMENT
-
-// "use client"
-
-// import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-
-// const data = [
-//   { name: 'Jan', misinformation: 4000, factualNews: 2400 },
-//   { name: 'Feb', misinformation: 3000, factualNews: 1398 },
-//   { name: 'Mar', misinformation: 2000, factualNews: 9800 },
-//   { name: 'Apr', misinformation: 2780, factualNews: 3908 },
-//   { name: 'May', misinformation: 1890, factualNews: 4800 },
-//   { name: 'Jun', misinformation: 2390, factualNews: 3800 },
-// ]
-
-// function TrendAnalysis() {
-//   return (
-//     <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-//       <h2 className="text-xl font-semibold mb-4">Trend Analysis</h2>
-//       <ResponsiveContainer width="100%" height={300}>
-//         <LineChart data={data}>
-//           <CartesianGrid strokeDasharray="3 3" />
-//           <XAxis dataKey="name" />
-//           <YAxis />
-//           <Tooltip />
-//           <Legend />
-//           <Line type="monotone" dataKey="misinformation" stroke="#8884d8" />
-//           <Line type="monotone" dataKey="factualNews" stroke="#82ca9d" />
-//         </LineChart>
-//       </ResponsiveContainer>
-//     </div>
-//   )
-// }
-
 "use client"
 
 
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { NewsItem } from "./NewsItem"; 
+import { NewsItem } from "./NewsItem"; // Update path as per your folder structure
+
 const GUARDIAN_API_KEY = process.env.GUARDIAN_API_KEY;
 
+
 const sections = [
-  { title: "Featured News", category: "featured" },
-  { title: "Latest News", category: "latest" },
+  { title: "World News", category: "world" },
+  { title: "Latest News", category: "news" },
   { title: "Politics", category: "politics" },
-  { title: "Entertainment", category: "entertainment" },
+  { title: "Sports", category: "sport" },
   { title: "Science & Technology", category: "technology" },
 ];
 
@@ -64,7 +32,7 @@ const TrendAnalysis: React.FC = () => {
           const url = new URL("https://content.guardianapis.com/search");
           url.searchParams.append("api-key", GUARDIAN_API_KEY || "");
           url.searchParams.append("section", section.category);
-          url.searchParams.append("show-fields", "trailText");
+          url.searchParams.append("show-fields", "thumbnail,trailText");
           url.searchParams.append("page-size", "3");
 
           const response = await fetch(url.toString());
