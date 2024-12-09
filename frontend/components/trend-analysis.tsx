@@ -38,14 +38,16 @@
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { NewsItem } from "./NewsItem"; 
+import { NewsItem } from "./NewsItem"; // Update path as per your folder structure
+
 const GUARDIAN_API_KEY = process.env.GUARDIAN_API_KEY;
 
+
 const sections = [
-  { title: "Featured News", category: "featured" },
-  { title: "Latest News", category: "latest" },
+  { title: "World News", category: "world" },
+  { title: "Latest News", category: "news" },
   { title: "Politics", category: "politics" },
-  { title: "Entertainment", category: "entertainment" },
+  { title: "Sports", category: "sport" },
   { title: "Science & Technology", category: "technology" },
 ];
 
@@ -64,7 +66,7 @@ const TrendAnalysis: React.FC = () => {
           const url = new URL("https://content.guardianapis.com/search");
           url.searchParams.append("api-key", GUARDIAN_API_KEY || "");
           url.searchParams.append("section", section.category);
-          url.searchParams.append("show-fields", "trailText");
+          url.searchParams.append("show-fields", "thumbnail,trailText");
           url.searchParams.append("page-size", "3");
 
           const response = await fetch(url.toString());
