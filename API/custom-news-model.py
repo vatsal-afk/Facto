@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 import requests
 import torch
 from flask_cors import CORS
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from sentence_transformers import SentenceTransformer, util
 import re
 import spacy
@@ -14,12 +14,16 @@ import os
 # Specify the path to the .env file
 from pathlib import Path
 env_path = Path(__file__).resolve().parent.parent / '.env'
+
 app = Flask(__name__)
 load_dotenv(dotenv_path=env_path)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
-# Guardian API Key (Add your API key here)
+# Guardian API Key
 guardian_api_key = os.getenv('GUARDIAN_API_KEY')
+
+# NewsAPI Key
+newsapi_key = os.getenv('NEWSAPI_KEY')
 
 # Summarization model setup
 summarizer_tokenizer = AutoTokenizer.from_pretrained("t5-small")
@@ -34,6 +38,7 @@ nlp = spacy.load("en_core_web_sm")
 # Global list for article storage
 article_store = []
 
+
 def clean_text(text):
     """Cleans the input text."""
     text = re.sub(r'<.*?>', '', text)  # Remove HTML tags
@@ -41,22 +46,25 @@ def clean_text(text):
     text = re.sub(r'\s+', ' ', text)  # Remove extra spaces
     return text.strip()
 
-def fetch_related_content(query):
-    """Fetch related content from The Guardian."""
-    search_url = f"https://content.guardianapis.com/search"
+
+def fetch_newsapi_content(query):
+    """Fetch related content from NewsAPI."""
+    search_url = "https://newsapi.org/v2/everything"
     params = {
         "q": query,
-        "api-key": guardian_api_key,
-        "show-fields": "headline,standfirst"
+        "apiKey": newsapi_key,
+        "language": "en",
+        "pageSize": 10,  # Limit the number of articles fetched
     }
     response = requests.get(search_url, params=params)
     if response.status_code != 200:
+        print(f"Error fetching from NewsAPI: {response.status_code}")
         return []
 
-    articles = response.json().get('response', {}).get('results', [])
+    articles = response.json().get('articles', [])
     for article in articles:
-        title = article.get("webTitle", "")
-        snippet = article["fields"].get("standfirst", "")
+        title = article.get("title", "")
+        snippet = article.get("description", "")
         if snippet:
             combined_text = f"{title} - {snippet}"
             article_store.append({
@@ -64,12 +72,40 @@ def fetch_related_content(query):
                 "embedding": similarity_model.encode(clean_text(combined_text), convert_to_tensor=True)
             })
 
+
+def fetch_related_content(query):
+    """Fetch related content from The Guardian and NewsAPI."""
+    # Fetch from The Guardian
+    guardian_search_url = f"https://content.guardianapis.com/search"
+    guardian_params = {
+        "q": query,
+        "api-key": guardian_api_key,
+        "show-fields": "headline,standfirst"
+    }
+    guardian_response = requests.get(guardian_search_url, params=guardian_params)
+    if guardian_response.status_code == 200:
+        guardian_articles = guardian_response.json().get('response', {}).get('results', [])
+        for article in guardian_articles:
+            title = article.get("webTitle", "")
+            snippet = article["fields"].get("standfirst", "")
+            if snippet:
+                combined_text = f"{title} - {snippet}"
+                article_store.append({
+                    "content": combined_text,
+                    "embedding": similarity_model.encode(clean_text(combined_text), convert_to_tensor=True)
+                })
+
+    # Fetch from NewsAPI
+    fetch_newsapi_content(query)
+
+
 def summarize_content(content):
     """Summarizes the given content."""
     input_text = "summarize: " + content
     inputs = summarizer_tokenizer(input_text, return_tensors="pt")
     outputs = summarizer_model.generate(inputs['input_ids'], max_length=100)
     return summarizer_tokenizer.decode(outputs[0], skip_special_tokens=True)
+
 
 def retrieve_similar_articles(news_text, top_k=3):
     """Retrieve similar articles based on cosine similarity."""
@@ -84,6 +120,7 @@ def retrieve_similar_articles(news_text, top_k=3):
     # Sort by similarity and return top_k results
     similarities = sorted(similarities, key=lambda x: x["similarity"], reverse=True)
     return similarities[:top_k]
+
 
 def is_fake_news(news_text):
     """Main function to detect fake news."""
@@ -103,6 +140,7 @@ def is_fake_news(news_text):
     average_similarity = sum(article["similarity"] for article in similar_articles) / len(similar_articles)
     return {"verdict": "Likely Fake News", "average_similarity": average_similarity}
 
+
 @app.route('/detect_fake_news', methods=['POST'])
 def detect_fake_news():
     data = request.get_json()
@@ -112,6 +150,7 @@ def detect_fake_news():
     news_text = data['news_text']
     result = is_fake_news(news_text)
     return jsonify(result)
+
 
 @app.route('/')
 def info_page():
@@ -124,7 +163,13 @@ def info_page():
     </ul>
     <h2>How to Use:</h2>
     <p>Send a POST request with a JSON payload containing the key <code>news_text</code> to the endpoint <code>/detect_fake_news</code>.</p>
+    <h2>Data Sources:</h2>
+    <ul>
+        <li>The Guardian API</li>
+        <li>NewsAPI (https://newsapi.org/)</li>
+    </ul>
     """
+
 
 if __name__ == '__main__':
     # Fetch some initial related content for testing
