@@ -6,8 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { NewsItem } from "./NewsItem"; // Update path as per your folder structure
 
-const GUARDIAN_API_KEY = process.env.GUARDIAN_API_KEY;
-
+const GUARDIAN_API_KEY = process.env.NEXT_PUBLIC_GUARDIAN_API_KEY;
 
 const sections = [
   { title: "World News", category: "world" },

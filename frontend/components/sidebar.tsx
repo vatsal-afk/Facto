@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, TrendingUp, Radio, FileText, Vote } from 'lucide-react'
+import { Home, TrendingUp, Radio, FileText, Vote, BarChart2, MessageSquare } from 'lucide-react'
 import { cn } from "@/lib/utils"
 import {
   Sidebar,
@@ -21,6 +21,8 @@ const menuItems = [
   { icon: TrendingUp, label: 'Trend Analysis', href: '/trendAnalysis' },
   { icon: Radio, label: 'Live Broadcast', href: '/live-broadcast' },
   { icon: Vote, label: 'Voting', href: '/voting' },
+  {icon: BarChart2, label: 'Social Media Analysis', href: '/social-media-analysis' },
+  { icon: MessageSquare, label: 'Discussions', href: '/discussions' },
 ]
 
 export default function AppSidebar() {
