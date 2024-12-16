@@ -8,11 +8,10 @@ interface NewsItemProps {
   image: string
   description: string
   link?: string
-  voteLink?: string;
+  articleId?: string
 }
 
-export function NewsItem({ title, image, description, link, voteLink }: NewsItemProps) {
-
+export function NewsItem({ title, image, description, link, articleId }: NewsItemProps) {
   return (
     <Card className="overflow-hidden flex flex-col">
       <Image
@@ -26,7 +25,7 @@ export function NewsItem({ title, image, description, link, voteLink }: NewsItem
         <h3 className="font-bold text-lg mb-2">{title}</h3>
         <p className="text-sm text-gray-600">{description}</p>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex justify-between">
         <Button 
           variant="link" 
           onClick={() => link && window.open(link, '_blank')}
@@ -34,12 +33,13 @@ export function NewsItem({ title, image, description, link, voteLink }: NewsItem
         >
           Read more
         </Button>
-        <Button variant="outline">
-          <Link href={voteLink || "#"} passHref>
+        <Link href={`/voting/${articleId}`} passHref>
+          <Button variant="outline">
             Vote Now
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       </CardFooter>
     </Card>
   )
 }
+

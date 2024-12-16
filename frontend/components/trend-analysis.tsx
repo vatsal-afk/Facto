@@ -1,10 +1,9 @@
 "use client"
 
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { NewsItem } from "./NewsItem"; // Update path as per your folder structure
+import { NewsItem } from "@/components/NewsItem";
 
 const GUARDIAN_API_KEY = process.env.NEXT_PUBLIC_GUARDIAN_API_KEY;
 
@@ -44,6 +43,7 @@ const TrendAnalysis: React.FC = () => {
               image: article.fields?.thumbnail || "/placeholder.svg?height=200&width=300",
               description: article.fields?.trailText || "No description available",
               link: article.webUrl,
+              articleId: article.id,
             })),
           };
         });
@@ -99,7 +99,7 @@ const TrendAnalysis: React.FC = () => {
                 image={newsItem.image}
                 description={newsItem.description}
                 link={newsItem.link}
-                voteLink="http://localhost:3000/voting"
+                articleId={newsItem.articleId}
               />
             ))}
           </div>
