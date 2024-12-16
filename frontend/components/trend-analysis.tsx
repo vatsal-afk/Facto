@@ -99,6 +99,7 @@ const TrendAnalysis: React.FC = () => {
                 image={newsItem.image}
                 description={newsItem.description}
                 link={newsItem.link}
+                voteLink="http://localhost:3000/voting"
               />
             ))}
           </div>

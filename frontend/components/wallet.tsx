@@ -25,9 +25,16 @@ export const ConnectWalletButton = () => {
     }
   };
 
-  const disconnect = () => {
+  const disconnect = async () => {
     if (sdk) {
-      sdk.terminate();
+      try {
+        await sdk.terminate();
+        console.log("Disconnected");
+      } catch (error) {
+        console.error("Error while disconnecting:", error);
+      }
+    } else {
+      console.warn("SDK is not available");
     }
   };
 
@@ -39,12 +46,12 @@ export const ConnectWalletButton = () => {
             <Button>{formatAddress(account)}</Button>
           </PopoverTrigger>
           <PopoverContent className="mt-2 w-44 bg-gray-100 border rounded-md shadow-lg right-0 z-10 top-10">
-            <button
+            <div
               onClick={disconnect}
               className="block w-full pl-2 pr-4 py-2 text-left text-[#F05252] hover:bg-gray-200"
             >
               Disconnect
-            </button>
+            </div>
           </PopoverContent>
         </Popover>
       ) : (

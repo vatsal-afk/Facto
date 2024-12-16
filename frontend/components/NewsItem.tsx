@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from "next/link";
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
@@ -7,9 +8,11 @@ interface NewsItemProps {
   image: string
   description: string
   link?: string
+  voteLink?: string;
 }
 
-export function NewsItem({ title, image, description, link }: NewsItemProps) {
+export function NewsItem({ title, image, description, link, voteLink }: NewsItemProps) {
+
   return (
     <Card className="overflow-hidden flex flex-col">
       <Image
@@ -30,6 +33,11 @@ export function NewsItem({ title, image, description, link }: NewsItemProps) {
           className={!link ? 'pointer-events-none opacity-50' : ''}
         >
           Read more
+        </Button>
+        <Button variant="outline">
+          <Link href={voteLink || "#"} passHref>
+            Vote Now
+          </Link>
         </Button>
       </CardFooter>
     </Card>

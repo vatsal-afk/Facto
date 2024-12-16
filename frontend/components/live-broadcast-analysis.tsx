@@ -67,6 +67,7 @@ export default function LiveBroadcastAnalysis() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [liveNewsStreams, setLiveNewsStreams] = useState<LiveStream[]>([]);
   const [draggedVideo, setDraggedVideo] = useState<LiveStream | null>(null);
+  const [transcription, setTranscription] = useState('');
 
   const toggleAnalysis = () => {
     setIsAnalyzing((prev) => !prev);
@@ -76,10 +77,47 @@ export default function LiveBroadcastAnalysis() {
     setDraggedVideo(stream);
   };
 
-  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     if (draggedVideo) {
-      setDraggedVideo(null); 
+      try {
+        // Send the dragged video URL to the backend using fetch
+        const response = await fetch('http://localhost:8000/transcribe', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ video_url: draggedVideo.url }),
+          credentials: 'same-origin' // Include credentials if needed (cookies, etc.)
+        });
+        
+
+        // Check if response body is not null
+        if (!response.body) {
+          throw new Error('Response body is null');
+        }
+
+        // Read the response as a stream
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let done = false;
+        let text = '';
+
+        // Process the stream and update transcription as it arrives
+        while (!done) {
+          const { value, done: isDone } = await reader.read();
+          done = isDone;
+          text += decoder.decode(value, { stream: true });
+          setTranscription(text); // Update transcription in real-time
+        }
+
+        console.log("Transcription completed:", text); // Optionally log full transcription after completion
+
+      } catch (error: any) {
+        console.error("Error sending video URL to backend:", error.message);
+      }
+
+      setDraggedVideo(null); // Clear the dragged video after processing
     }
   };
 

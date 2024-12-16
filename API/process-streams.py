@@ -169,7 +169,25 @@ def info_page():
         <li>NewsAPI (https://newsapi.org/)</li>
     </ul>
     """
+@app.route('/process-video', methods=['POST'])
+def process_video():
+    """Processes the video URL and detects fake news."""
+    data = request.get_json()
+    if not data or 'url' not in data:
+        return jsonify({"error": "Invalid input. Please provide 'url'."}), 400
 
+    video_url = data['url']
+
+    # Simulate fetching the video transcript (You can integrate the YouTube Data API for transcripts if needed)
+    simulated_transcript = f"This is a simulated transcript for video: {video_url}"
+
+    # Process the transcript for fake news detection
+
+    return jsonify({
+        "message": "Video processed successfully.",
+        "video_url": video_url,
+        "transcript": simulated_transcript
+    })
 
 if __name__ == '__main__':
     # Fetch some initial related content for testing
