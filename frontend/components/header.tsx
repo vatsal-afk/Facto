@@ -1,14 +1,23 @@
 "use client"
 
-// import { useSession, signIn, signOut } from "next-auth/react"
+import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons"
 import { useTheme } from "next-themes"
-import WalletComponent from '@/components/wallet'
+import { useWallet } from '@/app/WalletContext'
 
 export default function Header() {
-  // const { data: session } = useSession()
   const { theme, setTheme } = useTheme()
+  const { connected, account, connect, disconnect } = useWallet()
+  useEffect(() => {
+    console.log("Wallet Details in Header:", { 
+      connected, 
+      account, 
+      accountType: typeof account 
+    });
+  }, [connected, account]);
+  console.log("Wallet account:", account)
+  console.log("Wallet connected:", connected)
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-md py-4 px-6 flex justify-between items-center">
@@ -27,17 +36,17 @@ export default function Header() {
           <span className="sr-only">Toggle theme</span>
         </Button>
         <Button>Sign in</Button>
-        <WalletComponent />
-        {/* {session ? (
-          <>
-            <span>Signed in as {session.user?.email}</span>
-            <Button onClick={() => signOut()}>Sign out</Button>
-          </>
+        {connected ? (
+          <div className="flex items-center space-x-2">
+            <span className="text-gray-600 dark:text-gray-300">
+              {account ? `Connected: ${account.slice(0, 6)}...${account.slice(-4)}` : "Loading..."}
+            </span>
+            <Button onClick={disconnect}>Disconnect</Button>
+          </div>
         ) : (
-          <Button onClick={() => signIn()}>Sign in</Button>
-        )} */}
+          <Button onClick={connect}>Connect Wallet</Button>
+        )}
       </div>
     </header>
   )
 }
-

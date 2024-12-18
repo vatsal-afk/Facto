@@ -33,7 +33,13 @@ export function NewsItem({ title, image, description, link, articleId }: NewsIte
         >
           Read more
         </Button>
-        <Link href={`/voting/${articleId}`} passHref>
+        <Link
+          href={{
+              pathname: `/voting`,
+              query: { articleId, title, description },
+            }}
+            passHref
+          >
           <Button variant="outline">
             Vote Now
           </Button>

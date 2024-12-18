@@ -1,8 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import { ethers } from "ethers";
 import { Button } from "@/components/ui/button";
+import CryptoJS from "crypto-js";
+
+interface Article {
+	id: string;
+	title: string;
+	contentHash: string;
+	validVotes: number;
+	invalidVotes: number;
+	totalVotes: number;
+}
 
 const contractABI = [
 	{
@@ -198,83 +209,218 @@ const contractABI = [
 ];
 
 if (!process.env.NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS) {
-  throw new Error("NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS is not set in the environment variables.");
-}
+	throw new Error("NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS is not set up!");
+  }
+  
+  const contractAddress: string = process.env.NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS;
+  
+  const computeContentHash = (content: string) => {
+	return CryptoJS.SHA256(content).toString();
+  };
+  
+  interface VotingProps {
+	articleId: string;
+	title: string;
+	description: string;
+	account: string | null;
+	connected: boolean | false;
+  }
+  
+  export default function Voting({
+    articleId,
+    title,
+    description,
+    account,
+    connected
+}: VotingProps) {
+    const [isVoting, setIsVoting] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [article, setArticle] = useState<Article | null>(null);
+    const [articleCache, setArticleCache] = useState<{ [key: string]: Article }>({});
 
-const contractAddress: string = process.env.NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS;
+    const fetchArticle = async () => {
+        // Check if already in cache
+        if (articleCache[articleId]) {
+            setArticle(articleCache[articleId]);
+            setIsLoading(false);
+            return;
+        }
 
-export default function Voting({ articleId }: { articleId: string }) {
-  const [isVoting, setIsVoting] = useState(false)
-  const [article, setArticle] = useState<any>(null)
+        // Reset states
+        setIsLoading(true);
+        setError(null);
 
-  const fetchArticle = async () => {
-    try {
-      if (typeof window.ethereum !== "undefined") {
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
-        const contract = new ethers.Contract(contractAddress, contractABI, provider)
+        try {
+            // Validate MetaMask availability
+            if (typeof window.ethereum === "undefined") {
+                throw new Error("MetaMask is not installed.");
+            }
 
-        const articleData = await contract.getArticle(articleId)
-        setArticle({
-          id: articleId,
-          title: articleData[0],
-          contentHash: articleData[1],
-          validVotes: articleData[2].toNumber(),
-          invalidVotes: articleData[3].toNumber(),
-          totalVotes: articleData[4].toNumber(),
-        })
-      } else {
-        console.log("Please install MetaMask!")
-      }
-    } catch (error) {
-      console.error("Error fetching article:", error)
+            console.log(window.ethereum);
+
+            // Create the BrowserProvider instance for Ethers v6
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const signer = await provider.getSigner();
+            const contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+            // Attempt to fetch article
+            const articleData = await contract.getArticle(articleId);
+            console.log(articleData);
+
+            // If article not found, attempt to add it
+            if (!articleData) {
+                // Compute content hash
+                const contentHash = computeContentHash(`${title}${description}`);
+                console.log(title);
+                console.log(contentHash);
+
+                // Add article to blockchain
+                const tx = await contract.addArticle(title, contentHash);
+                await tx.wait();
+
+                // Fetch updated article data
+                const newArticleData = await contract.getArticle(articleId);
+
+                if (!newArticleData || newArticleData.length < 5) {
+                    throw new Error("Failed to retrieve article data after adding.");
+                }
+
+                const newArticle = {
+                    id: articleId,
+                    title: title,
+                    description: description,
+                    contentHash: newArticleData[1],
+                    validVotes: newArticleData[2].toNumber(),
+                    invalidVotes: newArticleData[3].toNumber(),
+                    totalVotes: newArticleData[4].toNumber(),
+                };
+
+                // Update cache and state
+                setArticleCache(prev => ({
+                    ...prev,
+                    [articleId]: newArticle
+                }));
+                setArticle(newArticle);
+            } else {
+                // Article exists, format and set
+                const existingArticle = {
+                    id: articleId,
+                    title: articleData[0],
+                    description: description, // Use passed description
+                    contentHash: articleData[1],
+                    validVotes: articleData[2].toNumber(),
+                    invalidVotes: articleData[3].toNumber(),
+                    totalVotes: articleData[4].toNumber(),
+                };
+
+                // Update cache and state
+                setArticleCache(prev => ({
+                    ...prev,
+                    [articleId]: existingArticle
+                }));
+                setArticle(existingArticle);
+            }
+        } catch (error: any) {
+            console.error("Error fetching or adding article:", error);
+            setError(error.message || "An unexpected error occurred.");
+            setArticle(null);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const vote = async (isValid: boolean) => {
+        setIsVoting(true);
+        setError(null);
+
+        try {
+            // Ensure MetaMask is available
+            if (typeof window.ethereum === "undefined") {
+                throw new Error("MetaMask is not installed.");
+            }
+
+            // Request account access
+            await window.ethereum.request({ method: "eth_requestAccounts" });
+            
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const signer = await provider.getSigner();
+            const contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+            // Submit vote
+            const tx = await contract.vote(articleId, isValid);
+            await tx.wait();
+
+            // Refresh article data
+            await fetchArticle();
+        } catch (error: any) {
+            console.error("Error voting on the article:", error);
+            setError(error.message || "Failed to submit vote.");
+        } finally {
+            setIsVoting(false);
+        }
+    };
+
+    useEffect(() => {
+        if (connected && account && articleId && title && description) {
+            fetchArticle();
+        }
+    }, [connected, account, articleId, title, description]);
+
+    if (isLoading) {
+        return (
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+                <p>Loading article data...</p>
+            </div>
+        );
     }
-  }
 
-  useEffect(() => {
-    fetchArticle()
-  }, [articleId])
-
-  const vote = async (choice: boolean) => {
-    setIsVoting(true)
-    try {
-      if (typeof window.ethereum !== 'undefined') {
-        await window.ethereum.request({ method: 'eth_requestAccounts' })
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
-        const signer = provider.getSigner()
-        const contract = new ethers.Contract(contractAddress, contractABI, signer)
-
-        const transaction = await contract.vote(articleId, choice)
-        await transaction.wait()
-        console.log('Vote submitted successfully')
-        fetchArticle()
-      } else {
-        console.log('Please install MetaMask!')
-      }
-    } catch (error) {
-      console.error('Error voting:', error)
+    if (error) {
+        return (
+            <div className="bg-red-100 dark:bg-red-900 p-4 rounded-lg">
+                <p className="text-red-700 dark:text-red-200">{error}</p>
+                <Button onClick={fetchArticle} className="mt-2">
+                    Retry
+                </Button>
+            </div>
+        );
     }
-    setIsVoting(false)
-  }
 
-  if (!article) {
-    return <div>Loading article data...</div>
-  }
+    if (!article) {
+        return (
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+                <p>No article found.</p>
+            </div>
+        );
+    }
 
-  return (
-    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-      <h2 className="text-xl font-semibold mb-4">Vote on Content Validity: {article.title}</h2>
-      <p>Content Hash: {article.contentHash}</p>
-      <p>Valid Votes: {article.validVotes}</p>
-      <p>Invalid Votes: {article.invalidVotes}</p>
-      <p>Total Votes: {article.totalVotes}</p>
-      <div className="flex space-x-4 mt-4">
-        <Button onClick={() => vote(true)} disabled={isVoting}>
-          Valid
-        </Button>
-        <Button onClick={() => vote(false)} disabled={isVoting}>
-          Invalid
-        </Button>
-      </div>
-    </div>
-  )
+    return (
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <h2 className="text-xl font-semibold mb-4">
+                Vote on Content Validity: {article.title}
+            </h2>
+            <div className="space-y-2 mb-4">
+                <p><strong>Content Hash:</strong> {article.contentHash}</p>
+                <p><strong>Valid Votes:</strong> {article.validVotes}</p>
+                <p><strong>Invalid Votes:</strong> {article.invalidVotes}</p>
+                <p><strong>Total Votes:</strong> {article.totalVotes}</p>
+            </div>
+            <div className="flex space-x-4">
+                <Button 
+                    onClick={() => vote(true)} 
+                    disabled={isVoting}
+                    variant="default"
+                >
+                    {isVoting ? "Submitting..." : "Valid"}
+                </Button>
+                <Button 
+                    onClick={() => vote(false)} 
+                    disabled={isVoting}
+                    variant="destructive"
+                >
+                    {isVoting ? "Submitting..." : "Invalid"}
+                </Button>
+            </div>
+        </div>
+    );
 }

@@ -1,9 +1,11 @@
 import DashboardWidgets from '@/components/dashboard-widgets'
 import Graph from '@/components/graph'
 import LiveBroadcastAnalysis from '@/components/live-broadcast-analysis'
+import { WalletProvider } from './WalletContext'
 
 export default function Home() {
   return (
+    <WalletProvider>
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
       <DashboardWidgets />
@@ -12,6 +14,7 @@ export default function Home() {
         <LiveBroadcastAnalysis />
       </div>
     </div>
+    </WalletProvider>
   )
 }
 
