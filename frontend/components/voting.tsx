@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import CryptoJS from "crypto-js";
 
 interface Article {
-	id: string;
+	id: number;
 	title: string;
 	contentHash: string;
 	validVotes: number;
@@ -219,7 +219,7 @@ if (!process.env.NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS) {
   };
   
   interface VotingProps {
-	articleId: string;
+	articleId: number;
 	title: string;
 	description: string;
 	account: string | null;
@@ -227,7 +227,7 @@ if (!process.env.NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS) {
   }
   
   export default function Voting({
-    articleId,
+	articleId,
     title,
     description,
     account,
@@ -240,12 +240,12 @@ if (!process.env.NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS) {
     const [articleCache, setArticleCache] = useState<{ [key: string]: Article }>({});
 
     const fetchArticle = async () => {
-        // Check if already in cache
-        if (articleCache[articleId]) {
-            setArticle(articleCache[articleId]);
-            setIsLoading(false);
-            return;
-        }
+
+		if (articleCache[articleId]) {
+			setArticle(articleCache[articleId]);
+			setIsLoading(false);
+			return;
+		}
 
         // Reset states
         setIsLoading(true);
@@ -275,19 +275,22 @@ if (!process.env.NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS) {
                 console.log(title);
                 console.log(contentHash);
 
+				const count = await contract.getArticleCount();
+      			const latestArticleId = count.toNumber() - 1;
+
                 // Add article to blockchain
                 const tx = await contract.addArticle(title, contentHash);
                 await tx.wait();
 
                 // Fetch updated article data
-                const newArticleData = await contract.getArticle(articleId);
+                const newArticleData = await contract.getArticle(latestArticleId);
 
-                if (!newArticleData || newArticleData.length < 5) {
+                if (!newArticleData) {
                     throw new Error("Failed to retrieve article data after adding.");
                 }
 
                 const newArticle = {
-                    id: articleId,
+                    id: latestArticleId,
                     title: title,
                     description: description,
                     contentHash: newArticleData[1],
@@ -299,7 +302,7 @@ if (!process.env.NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS) {
                 // Update cache and state
                 setArticleCache(prev => ({
                     ...prev,
-                    [articleId]: newArticle
+                    [latestArticleId]: newArticle
                 }));
                 setArticle(newArticle);
             } else {

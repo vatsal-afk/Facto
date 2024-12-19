@@ -8,10 +8,10 @@ interface NewsItemProps {
   image: string
   description: string
   link?: string
-  articleId?: string
+  //articleId?: number
 }
 
-export function NewsItem({ title, image, description, link, articleId }: NewsItemProps) {
+export function NewsItem({ title, image, description, link }: NewsItemProps) {
   return (
     <Card className="overflow-hidden flex flex-col">
       <Image
@@ -36,7 +36,7 @@ export function NewsItem({ title, image, description, link, articleId }: NewsIte
         <Link
           href={{
               pathname: `/voting`,
-              query: { articleId, title, description },
+              query: { title, description },
             }}
             passHref
           >

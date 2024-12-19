@@ -43,7 +43,7 @@ const TrendAnalysis: React.FC = () => {
               image: article.fields?.thumbnail || "/placeholder.svg?height=200&width=300",
               description: article.fields?.trailText || "No description available",
               link: article.webUrl,
-              articleId: article.id,
+              //articleId: article.id,
             })),
           };
         });
@@ -99,7 +99,7 @@ const TrendAnalysis: React.FC = () => {
                 image={newsItem.image}
                 description={newsItem.description}
                 link={newsItem.link}
-                articleId={newsItem.articleId}
+                //articleId={newsItem.articleId}
               />
             ))}
           </div>
