@@ -1,17 +1,34 @@
-import Image from 'next/image'
+import Image from "next/image";
 import Link from "next/link";
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useDispatch } from "react-redux";
+import { setArticleState } from "@/store/articleSlice";
 
 interface NewsItemProps {
-  title: string
-  image: string
-  description: string
-  link?: string
-  //articleId?: number
+  title: string;
+  image: string;
+  description: string;
+  link?: string;
+  articleId?: number; // Ensure articleId is passed here
 }
 
-export function NewsItem({ title, image, description, link }: NewsItemProps) {
+export function NewsItem({
+  title,
+  image,
+  description,
+  link,
+  articleId,
+}: NewsItemProps) {
+  const dispatch = useDispatch();
+
+  const handleVoteClick = () => {
+    if (articleId !== undefined) {
+      dispatch(setArticleState({ articleId })); // Dispatch action to update Redux store
+      console.log(`Article ID set in Redux: ${articleId}`);
+    }
+  };
+
   return (
     <Card className="overflow-hidden flex flex-col">
       <Image
@@ -26,26 +43,25 @@ export function NewsItem({ title, image, description, link }: NewsItemProps) {
         <p className="text-sm text-gray-600">{description}</p>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button 
-          variant="link" 
-          onClick={() => link && window.open(link, '_blank')}
-          className={!link ? 'pointer-events-none opacity-50' : ''}
+        <Button
+          variant="link"
+          onClick={() => link && window.open(link, "_blank")}
+          className={!link ? "pointer-events-none opacity-50" : ""}
         >
           Read more
         </Button>
         <Link
           href={{
-              pathname: `/voting`,
-              query: { title, description },
-            }}
-            passHref
-          >
-          <Button variant="outline">
+            pathname: `/voting`,
+            query: { articleId, title, description },
+          }}
+          passHref
+        >
+          <Button variant="outline" onClick={handleVoteClick}>
             Vote Now
           </Button>
         </Link>
       </CardFooter>
     </Card>
-  )
+  );
 }
-

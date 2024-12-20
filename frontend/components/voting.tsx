@@ -6,6 +6,9 @@ import { ethers } from "ethers";
 import { Button } from "@/components/ui/button";
 import CryptoJS from "crypto-js";
 
+import { useDispatch } from 'react-redux';
+import { setArticleState } from '../store/articleSlice';
+
 interface Article {
 	id: number;
 	title: string;
@@ -237,18 +240,20 @@ if (!process.env.NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS) {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [article, setArticle] = useState<Article | null>(null);
-    const [articleCache, setArticleCache] = useState<{ [key: string]: Article }>({});
+    // const [articleCache, setArticleCache] = useState<{ [key: string]: Article }>({});
 
     const fetchArticle = async () => {
 
-		if (articleCache[articleId]) {
-			setArticle(articleCache[articleId]);
-			setIsLoading(false);
-			return;
-		}
+		const dispatch = useDispatch();
 
-        // Reset states
-        setIsLoading(true);
+		// if (articleCache[articleId]) {
+		// 	setArticle(articleCache[articleId]);
+		// 	setIsLoading(false);
+		// 	return;
+		// }
+
+        // // Reset states
+        // setIsLoading(true);
         setError(null);
 
         try {
@@ -275,22 +280,28 @@ if (!process.env.NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS) {
                 console.log(title);
                 console.log(contentHash);
 
-				const count = await contract.getArticleCount();
-      			const latestArticleId = count.toNumber() - 1;
+				const count = (await contract.getArticleCount()).toNumber();
+      			const articleId = count.toNumber() - 1;
+
+				const articleState = {
+					articleId: articleId
+				}
+
+				dispatch(setArticleState(articleState));
 
                 // Add article to blockchain
                 const tx = await contract.addArticle(title, contentHash);
                 await tx.wait();
 
                 // Fetch updated article data
-                const newArticleData = await contract.getArticle(latestArticleId);
+                const newArticleData = await contract.getArticle(articleId);
 
                 if (!newArticleData) {
                     throw new Error("Failed to retrieve article data after adding.");
                 }
 
                 const newArticle = {
-                    id: latestArticleId,
+                    id: articleId,
                     title: title,
                     description: description,
                     contentHash: newArticleData[1],
@@ -300,10 +311,10 @@ if (!process.env.NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS) {
                 };
 
                 // Update cache and state
-                setArticleCache(prev => ({
-                    ...prev,
-                    [latestArticleId]: newArticle
-                }));
+                // setArticleCache(prev => ({
+                //     ...prev,
+                //     [articleId]: newArticle
+                // }));
                 setArticle(newArticle);
             } else {
                 // Article exists, format and set
@@ -318,10 +329,10 @@ if (!process.env.NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS) {
                 };
 
                 // Update cache and state
-                setArticleCache(prev => ({
-                    ...prev,
-                    [articleId]: existingArticle
-                }));
+                // setArticleCache(prev => ({
+                //     ...prev,
+                //     [articleId]: existingArticle
+                // }));
                 setArticle(existingArticle);
             }
         } catch (error: any) {
@@ -370,13 +381,13 @@ if (!process.env.NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS) {
         }
     }, [connected, account, articleId, title, description]);
 
-    if (isLoading) {
-        return (
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-                <p>Loading article data...</p>
-            </div>
-        );
-    }
+    // if (isLoading) {
+    //     return (
+    //         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+    //             <p>Loading article data...</p>
+    //         </div>
+    //     );
+    // }
 
     if (error) {
         return (

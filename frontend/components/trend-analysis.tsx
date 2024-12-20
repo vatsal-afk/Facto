@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { NewsItem } from "@/components/NewsItem";
 
+import { useSelector } from 'react-redux';
+
 const GUARDIAN_API_KEY = process.env.NEXT_PUBLIC_GUARDIAN_API_KEY;
 
 const sections = [
@@ -20,6 +22,9 @@ const TrendAnalysis: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Move useSelector to the top level
+  const articleId = useSelector((state: any) => state.articleState.articleId);
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -43,7 +48,6 @@ const TrendAnalysis: React.FC = () => {
               image: article.fields?.thumbnail || "/placeholder.svg?height=200&width=300",
               description: article.fields?.trailText || "No description available",
               link: article.webUrl,
-              //articleId: article.id,
             })),
           };
         });
@@ -62,7 +66,7 @@ const TrendAnalysis: React.FC = () => {
     };
 
     fetchNews();
-  }, []);
+  }, []); // Empty dependency array to ensure it runs once
 
   const filteredNews = (category: string) => {
     const categoryNews = newsData[category] || [];
@@ -99,7 +103,7 @@ const TrendAnalysis: React.FC = () => {
                 image={newsItem.image}
                 description={newsItem.description}
                 link={newsItem.link}
-                //articleId={newsItem.articleId}
+                articleId={articleId}
               />
             ))}
           </div>

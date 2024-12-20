@@ -6,7 +6,7 @@ import { useWallet } from '../WalletContext'
 
 export default function VotingPage() {
   const searchParams = useSearchParams()
-  const articleId = searchParams.get('articleId')
+  const articleId = parseInt(searchParams.get('articleId') || '', 10);
   const title = searchParams.get('title')
   const description = searchParams.get('description')
 
@@ -14,6 +14,10 @@ export default function VotingPage() {
 
   console.log(account);
   console.log(connected);
+  console.log(articleId);
+  console.log(title);
+  console.log(description);
+
 
   // Ensure values are available before rendering
   if (!articleId || !title || !description) {
