@@ -1,5 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertTriangle, CheckCircle, BarChart2, Users } from 'lucide-react'
+import LokSabhaBills from './lok-sabha-bills'
+import UNConventions from './un-conventions'
+import FakeNewsAlert from './fake-news-alert'
+import SocialMediaUpdates from './social-media-updates'
+import TrendsAndHashtags from './trends-and-hashtags'
+import ImportantArticles from './important-articles'
 
 const widgets = [
   {
@@ -31,7 +37,7 @@ const widgets = [
 export default function DashboardWidgets() {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {widgets.map((widget, index) => (
+      {/* {widgets.map((widget, index) => (
         <Card key={index}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -44,7 +50,13 @@ export default function DashboardWidgets() {
             <p className="text-xs text-muted-foreground">{widget.description}</p>
           </CardContent>
         </Card>
-      ))}
+      ))} */}
+      <LokSabhaBills />
+      <UNConventions />
+      <FakeNewsAlert />
+      <SocialMediaUpdates />
+      <TrendsAndHashtags />
+      <ImportantArticles />
     </div>
   )
 }

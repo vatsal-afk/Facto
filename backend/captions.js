@@ -16,7 +16,7 @@ if (!fs.existsSync(audioDir)) {
 }
 
 app.post("/transcribe", async (req, res) => {
-  const { video_url } = req.query;
+  const { video_url } = req.body;
 
   if (!video_url) {
     console.error("[Error]: No video URL provided");
