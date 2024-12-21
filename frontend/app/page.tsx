@@ -11,7 +11,6 @@ export default function Home() {
       <DashboardWidgets />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
         <Graph />
-        <LiveBroadcastAnalysis />
       </div>
     </div>
     </WalletProvider>
