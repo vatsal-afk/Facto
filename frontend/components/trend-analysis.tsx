@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { NewsItem } from "@/components/NewsItem";
+import { NewsItem } from "@/components/news-item";
 
 import { useSelector } from 'react-redux';
 

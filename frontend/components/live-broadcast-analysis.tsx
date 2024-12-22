@@ -131,60 +131,39 @@ export default function LiveBroadcastAnalysis() {
   const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setError(null);
-    
-    console.log("Drop event triggered");
-    
+  
     if (!draggedVideo) {
-      console.log("No draggedVideo state found");
+      console.error("No dragged video detected.");
       return;
     }
   
     try {
-      console.log("Attempting to send request with URL:", draggedVideo.url);
-      
-      const requestBody = { video_url: draggedVideo.url };
-      console.log("Request body:", requestBody);
+      console.log("Sending video URL to backend:", draggedVideo.url);
   
       const response = await fetch("http://localhost:8000/transcribe", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Add CORS headers if needed
-          "Accept": "application/json",
+          Accept: "application/json",
         },
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify({ video_url: draggedVideo.url }),
       });
-  
-      console.log("Response received:", response.status, response.statusText);
   
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("Error response:", errorText);
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`Server error: ${errorText}`);
       }
   
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-  
-      if (reader) {
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
-          
-          const text = decoder.decode(value);
-          console.log("Received transcription chunk:", text);
-          setTranscription(prev => prev + text);
-        }
-      }
-  
+      console.log("Request succeeded:", response);
     } catch (error) {
-      console.error("Error in handleDrop:", error);
-      setError(error instanceof Error ? error.message : 'Failed to process video');
+      console.error("Error sending request:", error);
+      setError(error instanceof Error ? error.message : "Unknown error occurred");
     } finally {
       setDraggedVideo(null);
     }
   };
-
+  
+  
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

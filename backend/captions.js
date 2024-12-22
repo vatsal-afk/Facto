@@ -7,7 +7,12 @@ const fs = require("fs");
 const app = express();
 const port = 8000;
 
-app.use(cors()); // Enable CORS for all origins
+app.use(cors({
+  origin: "http://localhost:3000", // Replace with your frontend's origin
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type", "Accept"],
+}));
+
 app.use(express.json());
 
 const audioDir = path.join(__dirname, "segments");
@@ -16,6 +21,9 @@ if (!fs.existsSync(audioDir)) {
 }
 
 app.post("/transcribe", async (req, res) => {
+  console.log("[Info]: Received request at /transcribe");
+  console.log("Request body:", req.body);
+
   const { video_url } = req.body;
 
   if (!video_url) {
@@ -24,74 +32,48 @@ app.post("/transcribe", async (req, res) => {
   }
 
   try {
-    console.log(`[Info]: Starting live transcription for video: ${video_url}`);
-
-    const segmentCommand = `
-      yt-dlp -f bestaudio --live-from-start "${video_url}" -o - |
-      ffmpeg -i pipe:0 -f segment -segment_time 30 -c copy "${audioDir}/audio_%03d.aac"
-    `;
-    console.log(`[Executing]: ${segmentCommand}`);
-    const segmentProcess = exec(segmentCommand);
-
-    // Step 2: Watch for new audio segments and transcribe
-    watchAndTranscribeSegments(res);
-
-    segmentProcess.on("error", (err) => {
-      console.error(`[Error]: Failed to segment live stream: ${err.message}`);
-      res.status(500).json({ error: `Failed to segment live stream: ${err.message}` });
-    });
-
-    segmentProcess.on("close", (code) => {
-      if (code !== 0) {
-        console.error(`[Error]: Segmentation process exited with code ${code}`);
-      } else {
-        console.log("[Info]: Segmentation process completed.");
-      }
-    });
+    console.log(`[Info]: Starting transcription for video: ${video_url}`);
+    // Your existing segmentation/transcription logic
+    res.status(200).json({ message: "Processing started" });
   } catch (err) {
     console.error(`[Error]: Failed to process video: ${err.message}`);
     res.status(500).json({ error: `Failed to process video: ${err.message}` });
   }
 });
 
+
 // Helper function to watch and transcribe audio segments
 function watchAndTranscribeSegments(res) {
   console.log(`[Info]: Watching directory for new segments: ${audioDir}`);
+  
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
 
-  let transcriptions = [];
+  const sendTranscription = (transcriptions) => {
+    res.write(`data: ${JSON.stringify(transcriptions)}\n\n`);
+  };
 
   fs.watch(audioDir, async (eventType, filename) => {
     if (eventType === "rename" && filename.endsWith(".aac")) {
       const segmentPath = path.join(audioDir, filename);
-
+      
       try {
         const transcription = await transcribeSegment(segmentPath);
-        transcriptions.push({ segment: filename, transcription });
-
-        console.log(transcription);
-
-        // Cleanup processed file
-        fs.unlinkSync(segmentPath);
+        sendTranscription({ segment: filename, transcription });
+        fs.unlinkSync(segmentPath); // Cleanup processed file
       } catch (err) {
         console.error(`[Error]: Failed to transcribe segment ${filename}: ${err.message}`);
       }
     }
   });
 
-  // Send transcription updates every 10 seconds
-  const interval = setInterval(() => {
-    res.write(`data: ${JSON.stringify(transcriptions)}\n\n`);
-  }, 10000);
-
   res.on("close", () => {
     console.log("[Info]: Client disconnected, stopping transcription.");
-    clearInterval(interval);
     res.end();
   });
 }
+
 
 // Helper function to transcribe audio segment using Whisper
 async function transcribeSegment(segmentPath) {

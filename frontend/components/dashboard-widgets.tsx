@@ -1,11 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertTriangle, CheckCircle, BarChart2, Users } from 'lucide-react'
-import LokSabhaBills from './lok-sabha-bills'
-import UNConventions from './un-conventions'
-import FakeNewsAlert from './fake-news-alert'
-import SocialMediaUpdates from './social-media-updates'
-import TrendsAndHashtags from './trends-and-hashtags'
-import ImportantArticles from './important-articles'
+import LokSabhaBills from './widgets/lok-sabha-bills'
+import UNConventions from './widgets/un-conventions'
+import FakeNewsAlert from './widgets/fake-news-alert'
+import SocialMediaUpdates from './widgets/social-media-updates'
+import TrendsAndHashtags from './widgets/trends-and-hashtags'
+import ImportantArticles from './widgets/important-articles'
 
 const widgets = [
   {

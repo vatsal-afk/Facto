@@ -1,7 +1,7 @@
 import DashboardWidgets from '@/components/dashboard-widgets'
-import Graph from '@/components/graph'
+import Graph from '@/components/widgets/graph'
 import { WalletProvider } from './WalletContext'
-import BreakingNewsBanner from '@/components/breaking-news-banner'
+import BreakingNewsBanner from '@/components/widgets/breaking-news-banner'
 
 export default function Home() {
   return (
