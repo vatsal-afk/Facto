@@ -23,6 +23,7 @@ const menuItems = [
   { icon: Vote, label: 'Voting', href: '/voting' },
   {icon: BarChart2, label: 'Social Media Analysis', href: '/social-media-analysis' },
   { icon: MessageSquare, label: 'Discussions', href: '/discussions' },
+  { icon: MessageSquare, label: 'Graph Analysis', href: '/graph-analysis' },
 ]
 
 export default function AppSidebar() {
