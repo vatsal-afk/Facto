@@ -1,63 +1,26 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertTriangle, CheckCircle, BarChart2, Users } from 'lucide-react'
-import LokSabhaBills from './widgets/lok-sabha-bills'
-import UNConventions from './widgets/un-conventions'
-import FakeNewsAlert from './widgets/fake-news-alert'
-import SocialMediaUpdates from './widgets/social-media-updates'
-import TrendsAndHashtags from './widgets/trends-and-hashtags'
-import ImportantArticles from './widgets/important-articles'
-
-const widgets = [
-  {
-    title: "Total Analyzed Content",
-    value: "1,234",
-    icon: BarChart2,
-    description: "Content pieces analyzed",
-  },
-  {
-    title: "Verified Content",
-    value: "892",
-    icon: CheckCircle,
-    description: "Pieces of content verified",
-  },
-  {
-    title: "Flagged Content",
-    value: "342",
-    icon: AlertTriangle,
-    description: "Pieces of content flagged",
-  },
-  {
-    title: "Active Users",
-    value: "573",
-    icon: Users,
-    description: "Users actively participating",
-  },
-]
+import LokSabhaBills from './widgets/lok-sabha-bills';
+import UNConventions from './widgets/un-conventions';
+import FakeNewsAlert from './widgets/fake-news-alert';
+import SocialMediaUpdates from './widgets/social-media-updates';
+import TrendsAndHashtags from './widgets/trends-and-hashtags';
+import ImportantArticles from './widgets/important-articles';
 
 export default function DashboardWidgets() {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {/* {widgets.map((widget, index) => (
-        <Card key={index}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {widget.title}
-            </CardTitle>
-            <widget.icon className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{widget.value}</div>
-            <p className="text-xs text-muted-foreground">{widget.description}</p>
-          </CardContent>
-        </Card>
-      ))} */}
-      <LokSabhaBills />
-      <UNConventions />
-      <FakeNewsAlert />
-      <SocialMediaUpdates />
-      <TrendsAndHashtags />
-      <ImportantArticles />
-    </div>
-  )
-}
+    <div className="flex gap-4">
+      {/* Left Section: 60% */}
+      <div className="flex-1 flex flex-col gap-4">
+        <FakeNewsAlert />
+        <SocialMediaUpdates />
+        <TrendsAndHashtags />
+        <ImportantArticles />
+      </div>
 
+      {/* Right Section: 40% */}
+      <div className="flex-[0.4] flex flex-col gap-4">
+        <LokSabhaBills />
+        <UNConventions />
+      </div>
+    </div>
+  );
+}

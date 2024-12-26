@@ -1,67 +1,81 @@
-"use client"
+import { useEffect, useRef } from 'react';
+import * as d3 from 'd3';
 
-import { useEffect, useRef } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ForceGraph2D } from 'react-force-graph'
-
-const data = {
-  nodes: [
-    { id: "News Article", group: 1 },
-    { id: "Person A", group: 2 },
-    { id: "Person B", group: 2 },
-    { id: "Event X", group: 3 },
-    { id: "Organization Y", group: 4 },
-    { id: "Location Z", group: 5 },
-  ],
-  links: [
-    { source: "News Article", target: "Person A" },
-    { source: "News Article", target: "Person B" },
-    { source: "News Article", target: "Event X" },
-    { source: "Person A", target: "Organization Y" },
-    { source: "Person B", target: "Location Z" },
-    { source: "Event X", target: "Location Z" },
-  ]
+interface Node extends d3.SimulationNodeDatum {
+  id: string;
+  group: number;
+  x?: number;
+  y?: number;
 }
 
-export default function KnowledgeGraph({ id }: { id: string }) {
-  const graphRef = useRef<any>()
+interface Link {
+  source: string | Node;
+  target: string | Node;
+  value: number;
+}
+
+interface KnowledgeGraphProps {
+  nodes: Node[];
+  links: Link[];
+}
+
+export function KnowledgeGraph({ nodes, links }: KnowledgeGraphProps) {
+  const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
-    if (graphRef.current) {
-      graphRef.current.d3Force('charge').strength(-100)
-      graphRef.current.d3Force('link').distance(70)
-    }
-  }, [])
+    if (!svgRef.current) return;
 
-  return (
-    <Card className="bg-white dark:bg-gray-800">
-      <CardHeader>
-        <CardTitle>Knowledge Graph</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div style={{ height: '500px' }}>
-          <ForceGraph2D
-            ref={graphRef}
-            graphData={data}
-            nodeAutoColorBy="group"
-            nodeCanvasObject={(node, ctx, globalScale) => {
-              const label = node.id as string
-              const fontSize = 12/globalScale
-              ctx.font = `${fontSize}px Sans-Serif`
-              ctx.textAlign = 'center'
-              ctx.textBaseline = 'middle'
-              ctx.fillStyle = node.color as string
-              ctx.fillText(label, node.x as number, node.y as number)
-            }}
-            nodePointerAreaPaint={(node, color, ctx) => {
-              ctx.fillStyle = color
-              const size = 10
-              ctx.fillRect((node.x as number) - size/2, (node.y as number) - size/2, size, size)
-            }}
-          />
-        </div>
-      </CardContent>
-    </Card>
-  )
+    const svg = d3.select(svgRef.current);
+    const width = 300;
+    const height = 200;
+
+    svg.selectAll("*").remove();
+
+    const nodesCopy = nodes.map(node => ({ ...node }));
+    const linksCopy = links.map(link => ({ ...link }));
+
+    const simulation = d3.forceSimulation<Node>(nodesCopy)
+      .force("link", d3.forceLink<Node, Link>()
+        .links(linksCopy)
+        .id((d: Node) => d.id))
+      .force("charge", d3.forceManyBody().strength(-50))
+      .force("center", d3.forceCenter(width / 2, height / 2));
+
+    const link = svg.append("g")
+      .selectAll<SVGLineElement, Link>("line")
+      .data(linksCopy)
+      .join("line")
+      .attr("stroke", "#999")
+      .attr("stroke-opacity", 0.6)
+      .attr("stroke-width", d => Math.sqrt(d.value));
+
+    const node = svg.append("g")
+      .selectAll<SVGCircleElement, Node>("circle")
+      .data(nodesCopy)
+      .join("circle")
+      .attr("r", 5)
+      .attr("fill", d => d3.schemeCategory10[d.group]);
+
+    node.append("title")
+      .text(d => d.id);
+
+    simulation.on("tick", () => {
+      link
+        .attr("x1", d => (d.source as Node).x ?? 0)
+        .attr("y1", d => (d.source as Node).y ?? 0)
+        .attr("x2", d => (d.target as Node).x ?? 0)
+        .attr("y2", d => (d.target as Node).y ?? 0);
+
+      node
+        .attr("cx", d => d.x ?? 0)
+        .attr("cy", d => d.y ?? 0);
+    });
+
+    // Proper cleanup function type
+    return () => {
+      simulation.stop();
+    };
+  }, [nodes, links]);
+
+  return <svg ref={svgRef} width="300" height="200"></svg>;
 }
-

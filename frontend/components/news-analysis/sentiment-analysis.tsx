@@ -1,43 +1,29 @@
-"use client"
+import { Card, CardContent } from "@/components/ui/card"
+import { ThumbsUp, ThumbsDown } from 'lucide-react'
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from "recharts"
+interface SentimentAnalysisProps {
+  score: number // 0 (negative) or 1 (positive)
+}
 
-const data = [
-  { name: "Positive", value: 60 },
-  { name: "Neutral", value: 30 },
-  { name: "Negative", value: 10 },
-]
+export function SentimentAnalysis({ score }: SentimentAnalysisProps) {
+  const isPositive = score === 1
 
-const COLORS = ["#22c55e", "#3b82f6", "#ef4444"]
-
-export default function SentimentAnalysis({ id }: { id: string }) {
   return (
-    <Card className="bg-white dark:bg-gray-800">
-      <CardHeader>
-        <CardTitle>Sentiment Analysis</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              outerRadius={80}
-              fill="#8884d8"
-              dataKey="value"
-            >
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
-      </CardContent>
-    </Card>
+    <div className="w-full max-w-sm mx-auto">
+      <div className={`flex items-center justify-center h-40 rounded-full ${isPositive ? 'bg-green-100' : 'bg-red-100'}`}>
+        {isPositive ? (
+          <ThumbsUp className="w-24 h-24 text-green-600" />
+        ) : (
+          <ThumbsDown className="w-24 h-24 text-red-600" />
+        )}
+      </div>
+      <div className="text-center mt-4">
+        <span className={`text-3xl font-bold ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+          {isPositive ? 'Positive' : 'Negative'}
+        </span>
+        <p className="text-lg text-muted-foreground mt-1">Sentiment</p>
+      </div>
+    </div>
   )
 }
 

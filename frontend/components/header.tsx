@@ -21,7 +21,7 @@ export default function Header() {
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-md py-4 px-6 flex justify-between items-center">
-      <h1 className="text-2xl font-bold">Misinformation Detection System</h1>
+      <h1 className="text-2xl font-bold">sachify.com (MisInfoBusters)</h1>
       <div className="flex items-center space-x-4">
         <Button
           variant="ghost"
