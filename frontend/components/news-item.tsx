@@ -2,8 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useDispatch } from "react-redux";
-import { setArticleState } from "@/store/articleSlice";
+// import { useDispatch } from "react-redux";
+// import { setArticleState } from "@/store/articleSlice";
 
 interface NewsItemProps {
   title: string;
@@ -20,11 +20,11 @@ export function NewsItem({
   link,
   articleId,
 }: NewsItemProps) {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const handleVoteClick = () => {
     if (articleId !== undefined) {
-      dispatch(setArticleState({ articleId })); // Dispatch action to update Redux store
+      // dispatch(setArticleState({ articleId })); // Dispatch action to update Redux store
       console.log(`Article ID set in Redux: ${articleId}`);
     }
   };
@@ -52,7 +52,7 @@ export function NewsItem({
         </Button>
         <Link
           href={{
-            pathname: `/voting`,
+            pathname: `/counter`,
             query: { articleId, title, description },
           }}
           passHref

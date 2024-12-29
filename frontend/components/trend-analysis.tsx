@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { NewsItem } from "@/components/news-item";
 
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 
 const GUARDIAN_API_KEY = process.env.NEXT_PUBLIC_GUARDIAN_API_KEY;
 
@@ -24,7 +24,7 @@ const TrendAnalysis: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Move useSelector to the top level
-  const articleId = useSelector((state: any) => state.articleState.articleId);
+  // const articleId = useSelector((state: any) => state.articleState.articleId);
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -103,7 +103,7 @@ const TrendAnalysis: React.FC = () => {
                 image={newsItem.image}
                 description={newsItem.description}
                 link={newsItem.link}
-                articleId={articleId}
+                // articleId={articleId}
               />
             ))}
           </div>

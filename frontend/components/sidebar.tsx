@@ -24,6 +24,7 @@ const menuItems = [
   {icon: BarChart2, label: 'Social Media Analysis', href: '/social-media-analysis' },
   { icon: MessageSquare, label: 'Discussions', href: '/discussions' },
   { icon: MessageSquare, label: 'Graph Analysis', href: '/graph-analysis' },
+  { icon: MessageSquare, label: 'Counter', href: '/counter' },
 ]
 
 export default function AppSidebar() {
