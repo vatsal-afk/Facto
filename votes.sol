@@ -15,7 +15,7 @@ contract NewsVoting {
     address public admin;
 
     event ArticleAdded(uint256 articleId, string title, string contentHash);
-    event Voted(uint256 articleId, address voter, bool vote);
+    event Voted(uint256 articleId, address vot er, bool vote);
 
     constructor() {
         admin = msg.sender;

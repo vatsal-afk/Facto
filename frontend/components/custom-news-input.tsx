@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 
 export default function CustomNewsInput() {
-  //const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [link, setLink] = useState('')
 
@@ -22,12 +21,19 @@ export default function CustomNewsInput() {
       });
 
       const result = await response.json();
+      
+      // Navigate to graph-analysis page with the result data as URL parameters
+      const queryParams = new URLSearchParams({
+        data: JSON.stringify(result)
+      }).toString();
+      
+      window.location.href = `/graph-analysis?${queryParams}`;
+      
       console.log(result);
     } catch (error) {
       console.error('Error:', error);
     }
   
-    //console.log('Submitting news:', { title, content })
     console.log('Submitting news:', { content })
   }
 
@@ -47,13 +53,6 @@ export default function CustomNewsInput() {
     <div className="space-y-6">
       <h1>Enter details:</h1>
       <form onSubmit={handleNewsSubmit} className="space-y-4">
-        {/* <Input
-          type="text"
-          placeholder="News Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        /> */}
         <Textarea
           placeholder="News Content"
           value={content}
@@ -84,4 +83,3 @@ export default function CustomNewsInput() {
     </div>
   )
 }
-
