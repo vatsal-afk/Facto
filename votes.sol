@@ -27,12 +27,14 @@ contract NewsVoting {
     }
 
     function addArticle(string memory title, string memory contentHash) public onlyAdmin {
-        Article storage newArticle = articles.push();
+        articles.push();
+        Article storage newArticle = articles[articles.length - 1];
         newArticle.title = title;
         newArticle.contentHash = contentHash;
 
         emit ArticleAdded(articles.length - 1, title, contentHash);
     }
+
 
     function vote(uint256 articleId, bool voteValid) public {
         require(articleId < articles.length, "Invalid article ID");
