@@ -1,195 +1,226 @@
-from flask import Flask, request, jsonify
-import requests
-import torch
-from flask_cors import CORS
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from flask import Flask, request, jsonify, send_file, url_for
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 from sentence_transformers import SentenceTransformer, util
-import re
 import spacy
 from textstat import flesch_reading_ease
-import numpy as np
-from dotenv import load_dotenv
+import networkx as nx
+import matplotlib.pyplot as plt
+import requests
+import re
+import time
 import os
+from flask_cors import CORS
 
-# Specify the path to the .env file
-from pathlib import Path
-env_path = Path(__file__).resolve().parent.parent / '.env'
+app = Flask(__name__, static_folder="D:/Projects/TT/TruthTell/API/static")
+CORS(app)
 
-app = Flask(__name__)
-load_dotenv(dotenv_path=env_path)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+# API Keys from environment variables
+GUARDIAN_API_KEY = os.getenv('GUARDIAN_API_KEY')
+NEWS_API_KEY = os.getenv('NEWS_API_KEY')
 
-# Guardian API Key
-guardian_api_key = os.getenv('GUARDIAN_API_KEY')
-
-# NewsAPI Key
-newsapi_key = os.getenv('NEWSAPI_KEY')
-
-# Summarization model setup
-summarizer_tokenizer = AutoTokenizer.from_pretrained("t5-small")
-summarizer_model = AutoModelForSeq2SeqLM.from_pretrained("t5-small")
-
-# Similarity model setup
+# Model Initialization
+tokenizer = AutoTokenizer.from_pretrained("t5-small")
+model = AutoModelForSeq2SeqLM.from_pretrained("t5-small")
 similarity_model = SentenceTransformer('all-MiniLM-L6-v2')
-
-# Spacy NLP for fact density calculation
+sentiment_analyzer = pipeline('sentiment-analysis')
 nlp = spacy.load("en_core_web_sm")
 
-# Global list for article storage
+# Data storage
 article_store = []
-
+app.config['KNOWLEDGE_GRAPH_DIR'] = 'D:/Projects/TT/TruthTell/API/static/knowledge_graphs'
 
 def clean_text(text):
-    """Cleans the input text."""
-    text = re.sub(r'<.*?>', '', text)  # Remove HTML tags
-    text = re.sub(r'[^\w\s]', '', text)  # Remove special characters
-    text = re.sub(r'\s+', ' ', text)  # Remove extra spaces
+    text = re.sub(r'<.*?>', '', text)
+    text = re.sub(r'[^\w\s]', '', text)
+    text = re.sub(r'\s+', ' ', text)
     return text.strip()
 
-
-def fetch_newsapi_content(query):
-    """Fetch related content from NewsAPI."""
-    search_url = "https://newsapi.org/v2/everything"
-    params = {
-        "q": query,
-        "apiKey": newsapi_key,
-        "language": "en",
-        "pageSize": 10,  # Limit the number of articles fetched
+def create_knowledge_graph(summary):
+    doc = nlp(summary)
+    graph = nx.DiGraph()
+    
+    dependency_map = {
+        "nsubj": "subject of",
+        "dobj": "object of",
+        "prep": "related to",
+        "amod": "describes",
+        "pobj": "prepositional object",
+        "advmod": "modifies",
+        "ROOT": "main action",
+        "attr": "attribute of",
+        "acomp": "complement",
     }
-    response = requests.get(search_url, params=params)
-    if response.status_code != 200:
-        print(f"Error fetching from NewsAPI: {response.status_code}")
-        return []
 
-    articles = response.json().get('articles', [])
-    for article in articles:
-        title = article.get("title", "")
-        snippet = article.get("description", "")
-        if snippet:
-            combined_text = f"{title} - {snippet}"
-            article_store.append({
-                "content": combined_text,
-                "embedding": similarity_model.encode(clean_text(combined_text), convert_to_tensor=True)
-            })
+    entities = [(ent.text, ent.label_) for ent in doc.ents 
+               if ent.label_ in ['ORG', 'GPE', 'LOC', 'PERSON', 'NORP']]
+    connected_nodes = set()
 
+    for ent in entities:
+        if ent[1] in ['ORG', 'GPE', 'LOC', 'PERSON']:
+            graph.add_node(ent[0], label=ent[1])
+
+    for token in doc:
+        if token.pos_ in ['NOUN', 'PROPN']:
+            if token.dep_ in dependency_map and token.head.pos_ == "VERB":
+                relation = dependency_map.get(token.dep_, "related to")
+                graph.add_edge(token.head.text, token.text, label=relation)
+                connected_nodes.add(token.head.text)
+                connected_nodes.add(token.text)
+
+    nodes_to_remove = [node for node in graph.nodes if node not in connected_nodes]
+    graph.remove_nodes_from(nodes_to_remove)
+
+    plt.figure(figsize=(12, 8))
+    pos = nx.spring_layout(graph)
+    nx.draw(graph, pos, with_labels=True, node_size=3000, 
+            node_color="lightblue", font_size=10, font_weight="bold")
+    plt.title("Knowledge Graph - Noun Nodes Only")
+    # plt.savefig("knowledge_graph.png", format="PNG")
+    # plt.close()
+    if not os.path.exists(app.config['KNOWLEDGE_GRAPH_DIR']):
+        os.makedirs(app.config['KNOWLEDGE_GRAPH_DIR'])
+    
+    filename = f"knowledge_graph_{int(time.time())}.png"
+    filepath = os.path.join(app.config['KNOWLEDGE_GRAPH_DIR'], filename)
+    plt.savefig(filepath, format="PNG")
+    plt.close()
+
+    return list(connected_nodes), filename
 
 def fetch_related_content(query):
-    """Fetch related content from The Guardian and NewsAPI."""
-    # Fetch from The Guardian
-    guardian_search_url = f"https://content.guardianapis.com/search"
-    guardian_params = {
+    # Guardian API
+    search_url_guardian = "https://content.guardianapis.com/search"
+    params_guardian = {
         "q": query,
-        "api-key": guardian_api_key,
+        "api-key": GUARDIAN_API_KEY,
         "show-fields": "headline,standfirst"
     }
-    guardian_response = requests.get(guardian_search_url, params=guardian_params)
-    if guardian_response.status_code == 200:
-        guardian_articles = guardian_response.json().get('response', {}).get('results', [])
-        for article in guardian_articles:
-            title = article.get("webTitle", "")
-            snippet = article["fields"].get("standfirst", "")
-            if snippet:
-                combined_text = f"{title} - {snippet}"
-                article_store.append({
-                    "content": combined_text,
-                    "embedding": similarity_model.encode(clean_text(combined_text), convert_to_tensor=True)
-                })
+    response_guardian = requests.get(search_url_guardian, params=params_guardian)
+    articles_guardian = response_guardian.json().get('response', {}).get('results', [])
+    
+    # NewsAPI
+    search_url_newsapi = "https://newsapi.org/v2/everything"
+    params_newsapi = {
+        "q": query,
+        "apiKey": NEWS_API_KEY,
+        "language": "en",
+        "sortBy": "relevancy"
+    }
+    response_newsapi = requests.get(search_url_newsapi, params=params_newsapi)
+    articles_newsapi = response_newsapi.json().get('articles', [])
+    
+    # Process articles
+    for article in articles_guardian:
+        title = article.get("webTitle", "")
+        snippet = article["fields"].get("standfirst", "")
+        process_article(title, snippet)
 
-    # Fetch from NewsAPI
-    fetch_newsapi_content(query)
+    for article in articles_newsapi:
+        title = article.get("title", "")
+        snippet = article.get("description", "")
+        process_article(title, snippet)
 
+def process_article(title, snippet):
+    if snippet:
+        combined_text = f"{title} - {snippet}"
+        article_store.append(combined_text)
 
-def summarize_content(content):
-    """Summarizes the given content."""
-    input_text = "summarize: " + content
-    inputs = summarizer_tokenizer(input_text, return_tensors="pt")
-    outputs = summarizer_model.generate(inputs['input_ids'], max_length=100)
-    return summarizer_tokenizer.decode(outputs[0], skip_special_tokens=True)
+def calculate_scores(input_text, related_snippet):
+    sentiment_score = sentiment_consistency(input_text, related_snippet)
+    fact_density = fact_density_score(input_text)
+    readability = readability_score(input_text)
+    lexical_diversity = lexical_diversity_score(input_text)
+    
+    return {
+        'sentiment_consistency': sentiment_score,
+        'fact_density': fact_density,
+        'readability': readability,
+        'lexical_diversity': lexical_diversity
+    }
 
+def sentiment_consistency(input_text, related_snippet):
+    input_sentiment = sentiment_analyzer(input_text)[0]['label']
+    related_sentiment = sentiment_analyzer(related_snippet)[0]['label']
+    return 1 if input_sentiment == related_sentiment else 0
 
-def retrieve_similar_articles(news_text, top_k=3):
-    """Retrieve similar articles based on cosine similarity."""
-    query_embedding = similarity_model.encode(clean_text(news_text), convert_to_tensor=True)
-    similarities = [
-        {
-            "content": article["content"],
-            "similarity": util.cos_sim(query_embedding, article["embedding"]).item()
+def fact_density_score(text):
+    doc = nlp(text)
+    entities = [ent.text for ent in doc.ents]
+    return len(entities) / len(text.split())
+
+def readability_score(text):
+    return flesch_reading_ease(text)
+
+def lexical_diversity_score(text):
+    words = text.split()
+    unique_words = set(words)
+    return len(unique_words) / len(words)
+
+def get_verdict(similarity_score):
+    if similarity_score > 0.4:
+        return "Real News"
+    elif similarity_score > 0.25:
+        return "Likely Real News"
+    elif similarity_score > 0.2:
+        return "Unverified"
+    else:
+        return "Likely Fake News"
+
+@app.route('/verify_news', methods=['POST'])
+def verify_news():
+    try:
+        data = request.get_json()
+        news_text = data.get('news_text')
+        
+        if not news_text:
+            return jsonify({'error': 'No news text provided'}), 400
+        
+        # Clear previous data
+        article_store.clear()
+        
+        # Fetch and process related content
+        fetch_related_content(news_text)
+        
+        if not article_store:
+            return jsonify({'error': 'No related content found'}), 404
+        
+        # Calculate similarity
+        news_embedding = similarity_model.encode(news_text, convert_to_tensor=True)
+        max_similarity = 0
+        best_article = ""
+        
+        for article in article_store:
+            similarity = util.pytorch_cos_sim(
+                news_embedding,
+                similarity_model.encode(article, convert_to_tensor=True)
+            ).item()
+            
+            if similarity > max_similarity:
+                max_similarity = similarity
+                best_article = article
+        
+        # Generate knowledge graph
+        connected_nodes, graph_filename = create_knowledge_graph(best_article)
+        graph_url = url_for('static', filename=f'knowledge_graphs/{graph_filename}', _external=True)
+        
+        # Calculate scores
+        scores = calculate_scores(news_text, best_article)
+        verdict = get_verdict(max_similarity)
+        
+        response = {
+            'status': 'success',
+            'results': {
+                'scores': scores,
+                'maximum_similarity': max_similarity,
+                'verdict': verdict,
+                'knowledge_graph': graph_url,
+            }
         }
-        for article in article_store
-    ]
-    # Sort by similarity and return top_k results
-    similarities = sorted(similarities, key=lambda x: x["similarity"], reverse=True)
-    return similarities[:top_k]
-
-
-def is_fake_news(news_text):
-    """Main function to detect fake news."""
-    if not article_store:
-        return {"verdict": "Unverified", "reason": "No related content indexed"}
-
-    similar_articles = retrieve_similar_articles(news_text, top_k=3)
-    if not similar_articles:
-        return {"verdict": "Unverified", "reason": "No similar articles found"}
-
-    for article in similar_articles:
-        summary = summarize_content(article["content"])
-        similarity_score = article["similarity"]
-        if similarity_score > 0.25:
-            return {"verdict": "Likely Real News", "similarity_score": similarity_score, "summary": summary}
-
-    average_similarity = sum(article["similarity"] for article in similar_articles) / len(similar_articles)
-    return {"verdict": "Likely Fake News", "average_similarity": average_similarity}
-
-
-@app.route('/detect_fake_news', methods=['POST'])
-def detect_fake_news():
-    data = request.get_json()
-    if not data or 'news_text' not in data:
-        return jsonify({"error": "Invalid input. Please provide 'news_text' in JSON payload."}), 400
-
-    news_text = data['news_text']
-    result = is_fake_news(news_text)
-    return jsonify(result)
-
-
-@app.route('/')
-def info_page():
-    return """
-    <h1>Welcome to the TruthTell Backend API</h1>
-    <p>This API helps detect whether a news article is likely fake or real.</p>
-    <h2>Endpoints:</h2>
-    <ul>
-        <li><strong>POST /detect_fake_news</strong>: Submit a news article to analyze its authenticity.</li>
-    </ul>
-    <h2>How to Use:</h2>
-    <p>Send a POST request with a JSON payload containing the key <code>news_text</code> to the endpoint <code>/detect_fake_news</code>.</p>
-    <h2>Data Sources:</h2>
-    <ul>
-        <li>The Guardian API</li>
-        <li>NewsAPI (https://newsapi.org/)</li>
-    </ul>
-    """
-@app.route('/process-video', methods=['POST'])
-def process_video():
-    """Processes the video URL and detects fake news."""
-    data = request.get_json()
-    if not data or 'url' not in data:
-        return jsonify({"error": "Invalid input. Please provide 'url'."}), 400
-
-    video_url = data['url']
-
-    # Simulate fetching the video transcript (You can integrate the YouTube Data API for transcripts if needed)
-    simulated_transcript = f"This is a simulated transcript for video: {video_url}"
-
-    # Process the transcript for fake news detection
-
-    return jsonify({
-        "message": "Video processed successfully.",
-        "video_url": video_url,
-        "transcript": simulated_transcript
-    })
+        
+        return jsonify(response)
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    # Fetch some initial related content for testing
-    fetch_related_content("example query")
     app.run(debug=True, port=5000)
