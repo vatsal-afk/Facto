@@ -6,40 +6,48 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 
 export default function CustomNewsInput() {
-  //const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [link, setLink] = useState('')
 
   const handleNewsSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    const requestBody = { news_text: content };
+    console.log('Sending to server:', requestBody);
+
     try {
-      const response = await fetch('http://127.0.0.1:5000/detect_fake_news', {
+      const response = await fetch('http://127.0.0.1:5000/verify_news', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ news_text: content }),
+        body: JSON.stringify(requestBody),
       });
 
       const result = await response.json();
-      console.log(result);
+      console.log('Received from server:', result);
+
+      // Navigate to graph-analysis page with the result data as URL parameters
+      const queryParams = new URLSearchParams({
+        data: JSON.stringify(result)
+      }).toString();
+
+      console.log('Navigating to:', `/graph-analysis?${queryParams}`);
+      window.location.href = `/graph-analysis?${queryParams}`;
     } catch (error) {
       console.error('Error:', error);
     }
   
-    //console.log('Submitting news:', { title, content })
-    console.log('Submitting news:', { content })
+    console.log('Submitting news:', { content });
   }
 
   const handleLinkSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: Implement link submission logic
     console.log('Submitting link:', { link })
   }
 
   const handleFileSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: Implement link submission logic
     console.log('Submitting file')
   }
 
@@ -47,13 +55,6 @@ export default function CustomNewsInput() {
     <div className="space-y-6">
       <h1>Enter details:</h1>
       <form onSubmit={handleNewsSubmit} className="space-y-4">
-        {/* <Input
-          type="text"
-          placeholder="News Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        /> */}
         <Textarea
           placeholder="News Content"
           value={content}
@@ -84,4 +85,3 @@ export default function CustomNewsInput() {
     </div>
   )
 }
-
