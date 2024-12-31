@@ -29,7 +29,7 @@ const LiveNews: React.FC<{ setLiveNewsStreams: React.Dispatch<React.SetStateActi
 }) => {
   useEffect(() => {
     const fetchLiveNews = async () => {
-      const YouTube_API_Key = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY
+      const YouTube_API_Key = "AIzaSyCXZVLg48y855cUljUqco5OIwpqOy2W_hA"
       if (!YouTube_API_Key) {
         console.error("YouTube API key is not configured")
         return
@@ -162,8 +162,34 @@ export default function LiveBroadcastAnalysis() {
       setDraggedVideo(null);
     }
   };
-  
-  
+
+  const sendVideoUrlToBackend = async () => {
+    if (!draggedVideo) {
+      console.error("No video selected to send.");
+      return;
+    }
+    try {
+      console.log("Sending video URL to backend:", draggedVideo.url);
+      const response = await fetch("http://localhost:8000/transcribe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ video_url: draggedVideo.url }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Server error: ${errorText}`);
+      }
+      console.log("Video URL sent successfully:", draggedVideo.url);
+    } catch (error) {
+      console.error("Error sending video URL:", error);
+      setError(error instanceof Error ? error.message : "Unknown error occurred");
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -210,6 +236,14 @@ export default function LiveBroadcastAnalysis() {
               className="flex-1"
             >
               {isGenerating ? "Stop Generating" : "Generate Videos"}
+            </Button>
+          </div>
+          <div className="flex space-x-4 mb-4">
+            <Button 
+              onClick={sendVideoUrlToBackend} 
+              className="flex-1"
+            >
+              Send Video URL to Backend
             </Button>
           </div>
           {isGenerating && <LiveNews setLiveNewsStreams={setLiveNewsStreams} />}
