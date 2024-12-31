@@ -6,20 +6,13 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
-const initialData = [
-  { platform: 'Twitter', misinformation: 4000, factualContent: 2400 },
-  { platform: 'Facebook', misinformation: 3000, factualContent: 3500 },
-  { platform: 'Instagram', misinformation: 2000, factualContent: 5000 },
-  { platform: 'TikTok', misinformation: 2780, factualContent: 3908 },
-  { platform: 'YouTube', misinformation: 1890, factualContent: 4800 },
-]
-
 export default function SocialMediaAnalysis() {
-  const [data, setData] = useState(initialData)
+  const [data, setData] = useState([])
   const [url, setUrl] = useState('')
   const [trendingTopics, setTrendingTopics] = useState(null)
   const [error, setError] = useState(null)
 
+  // Fetch trending topics and Reddit posts
   useEffect(() => {
     const fetchTrendingAndRedditPosts = async () => {
       try {
@@ -28,27 +21,46 @@ export default function SocialMediaAnalysis() {
           throw new Error('Failed to fetch data from the server');
         }
         const data = await response.json();
-        setTrendingTopics(data); // Store data in state
+        setTrendingTopics(data); // Store trending topics and Reddit posts
       } catch (err) {
         console.error(err);
-        setError(err.message); // Store error in state
       }
     };
 
     fetchTrendingAndRedditPosts();
   }, []);
 
-  const handleAnalyze = () => {
-    // This is where you'd typically make an API call to analyze the URL
-    console.log('Analyzing URL:', url)
-    // For now, we'll just randomize the data
-    const newData = data.map(item => ({
-      ...item,
-      misinformation: Math.floor(Math.random() * 5000),
-      factualContent: Math.floor(Math.random() * 5000)
-    }))
-    setData(newData)
-  }
+  // Handle analysis of the social media post URL
+  const handleAnalyze = async () => {
+    try {
+      if (!url) {
+        alert('Please enter a URL to analyze.');
+        return;
+      }
+
+      console.log('Analyzing URL:', url);
+
+      // Sending the URL to the backend for analysis
+      const response = await fetch('http://localhost:5000/analyze-url', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to analyze the URL.');
+      }
+
+      // The backend returns the data directly
+      const analysisData = await response.json();
+      setData(analysisData); // Update state with the backend analysis data
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -105,24 +117,26 @@ export default function SocialMediaAnalysis() {
       </Card>
 
       {/* Social Media Misinformation Analysis Chart */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Social Media Misinformation Analysis</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="platform" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="misinformation" fill="#8884d8" />
-              <Bar dataKey="factualContent" fill="#82ca9d" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
+      {data.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Social Media Misinformation Analysis</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="platform" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="misinformation" fill="#8884d8" />
+                <Bar dataKey="factualContent" fill="#82ca9d" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

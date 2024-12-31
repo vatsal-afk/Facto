@@ -46,9 +46,16 @@ jspm_packages/
 
 ./.env
 
+
 backend/env
+backend/venv
 backend/node_modules
 backend/segments
+
+backendddd/env
+backendddd/venv
+backendddd/node_modules
+backendddd/segments
 
 API/venv/
 

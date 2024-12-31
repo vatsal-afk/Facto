@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SentimentAnalysis } from "./sentiment-analysis";
 import { ReadabilityScore } from "./readability-score";
@@ -9,7 +10,6 @@ import { FactDensity } from "./fact-density";
 import { LexicalDiversity } from "./lexical-diversity";
 import { Similarity } from "./similarity";
 import { CheckCircle2, XCircle, AlertCircle } from "lucide-react";
-import { useEffect, useState } from "react";
 
 interface Scores {
   fact_density: number;
@@ -46,7 +46,7 @@ export function NewsAnalysisReport() {
   }, []);
 
   const getVerdictDisplay = () => {
-    if (!analysisData) {
+    if (!analysisData?.results) {
       return {
         icon: null,
         text: "Loading...",
@@ -54,7 +54,7 @@ export function NewsAnalysisReport() {
       };
     }
 
-    const verdict = analysisData.results.verdict.toLowerCase();
+    const verdict = analysisData.results.verdict?.toLowerCase();
     if (verdict === "real news") {
       return {
         icon: <CheckCircle2 className="w-24 h-24 text-green-600 mb-4" />,
@@ -78,7 +78,7 @@ export function NewsAnalysisReport() {
 
   const verdictDisplay = getVerdictDisplay();
 
-  const metricsData = analysisData?.results.scores
+  const metricsData = analysisData?.results?.scores
     ? [
         { metric: "Fact Density", value: analysisData.results.scores.fact_density },
         { metric: "Lexical Diversity", value: analysisData.results.scores.lexical_diversity },
@@ -102,11 +102,11 @@ export function NewsAnalysisReport() {
         </CardContent>
       </Card>
 
-      {analysisData && (
+      {analysisData?.results && (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <MetricsAnalysis data={metricsData} />
-            <SentimentAnalysis sentiment={analysisData.results.scores.sentiment_consistency} />
+            <SentimentAnalysis score={analysisData.results.scores.sentiment_consistency} />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

@@ -1,0 +1,36 @@
+# Web framework and server setup
+flask                # Flask for creating the web server
+flask_cors           # Flask-CORS for handling cross-origin requests
+
+# Web scraping and data extraction
+bs4                  # Beautiful Soup for HTML parsing and web scraping
+selenium             # Selenium for automating web browsers (if needed for scraping)
+webdriver_manager    # Manages WebDriver binaries for Selenium
+
+# Data fetching and parsing
+requests             # HTTP library for making requests to external services
+feedparser           # RSS feed parser (for parsing UN News feed)
+
+# Natural Language Processing (NLP)
+transformers         # Hugging Face Transformers library for NLP tasks
+sentence_transformers # Sentence Transformers for embedding sentences and computing similarity
+spacy                # SpaCy for NLP tasks like tokenization, named entity recognition, etc.
+tokenizers           # Tokenizers for working with subword tokenization (used with transformers)
+
+# Text analysis and readability
+textstat             # Library for computing text readability scores
+
+# Data visualization and graphing
+matplotlib           # Matplotlib for creating static, animated, and interactive visualizations
+
+# Graph-based algorithms
+networkx             # Library for creating, manipulating, and studying complex networks of nodes and edges
+
+# Machine learning
+torch                # PyTorch for deep learning and neural networks
+
+# SpaCy model download (you can add this as a separate command to run after installation)
+# python -m spacy download en_core_web_sm  # Download SpaCy's small English model for NLP tasks
+
+pytrends
+praw
