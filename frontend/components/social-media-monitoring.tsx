@@ -12,6 +12,24 @@ export default function SocialMediaAnalysis() {
   const [trendingTopics, setTrendingTopics] = useState(null)
   const [error, setError] = useState(null)
 
+  useEffect(() => {
+    const fetchTrendingAndRedditPosts = async () => {
+      try {
+        const response = await fetch('http://localhost:5001/trending-topics-by-reddit');
+        if (!response.ok) {
+          throw new Error('Failed to fetch data from the server');
+        }
+        const data = await response.json();
+        setTrendingTopics(data); // Store data in state
+      } catch (err) {
+        console.error(err);
+        setError(err.message); // Store error in state
+      }
+    };
+
+    fetchTrendingAndRedditPosts();
+  }, []);
+
   // Fetch trending topics and Reddit posts
   useEffect(() => {
     const fetchTrendingAndRedditPosts = async () => {

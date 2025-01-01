@@ -1,6 +1,9 @@
 import Image from "next/image";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useDispatch } from "react-redux";
+import { setArticleState } from "@/store/articleSlice";
+import { useSession } from "next-auth/react";
 
 interface NewsItemProps {
   title: string;
@@ -21,6 +24,16 @@ export function NewsItem({
   index,
   handleVoteClick, // Destructure it here
 }: NewsItemProps) {
+  const dispatch = useDispatch();
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role === "admin";
+
+  const handleVoteClick = () => {
+    if (articleId !== undefined) {
+      dispatch(setArticleState({ articleId }));
+      console.log(`Article ID set in Redux: ${articleId}`);
+    }
+  };
 
   return (
     <Card className="overflow-hidden flex flex-col">
@@ -43,9 +56,19 @@ export function NewsItem({
         >
           Read more
         </Button>
-        <Button variant="outline" onClick={handleVoteClick}>
-          Vote Now
-        </Button>
+        {isAdmin && (
+          <Link
+            href={{
+              pathname: `/voting`,
+              query: { articleId, title, description },
+            }}
+            passHref
+          >
+            <Button variant="outline" onClick={handleVoteClick}>
+              Vote Now
+            </Button>
+          </Link>
+        )}
       </CardFooter>
     </Card>
   );

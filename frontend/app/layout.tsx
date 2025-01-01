@@ -1,5 +1,6 @@
-// app/layout.tsx
 import { Inter } from 'next/font/google'
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Providers from "./providers"
 import './globals.css'
 import Header from '@/components/header'
@@ -12,11 +13,13 @@ export const metadata = {
   description: 'Real-Time Misinformation Detection and Verification System for Broadcast Media',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const session = await getServerSession(authOptions);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>

@@ -1,3 +1,5 @@
+"use client"
+
 import CustomNewsInput from '@/components/custom-news-input'
 
 export default function CustomNewsPage() {
