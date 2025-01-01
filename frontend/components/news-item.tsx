@@ -4,13 +4,14 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useDispatch } from "react-redux";
 import { setArticleState } from "@/store/articleSlice";
+import { useSession } from "next-auth/react";
 
 interface NewsItemProps {
   title: string;
   image: string;
   description: string;
   link?: string;
-  articleId?: number; // Ensure articleId is passed here
+  articleId?: number;
 }
 
 export function NewsItem({
@@ -21,10 +22,12 @@ export function NewsItem({
   articleId,
 }: NewsItemProps) {
   const dispatch = useDispatch();
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role === "admin";
 
   const handleVoteClick = () => {
     if (articleId !== undefined) {
-      dispatch(setArticleState({ articleId })); // Dispatch action to update Redux store
+      dispatch(setArticleState({ articleId }));
       console.log(`Article ID set in Redux: ${articleId}`);
     }
   };
@@ -50,17 +53,19 @@ export function NewsItem({
         >
           Read more
         </Button>
-        <Link
-          href={{
-            pathname: `/voting`,
-            query: { articleId, title, description },
-          }}
-          passHref
-        >
-          <Button variant="outline" onClick={handleVoteClick}>
-            Vote Now
-          </Button>
-        </Link>
+        {isAdmin && (
+          <Link
+            href={{
+              pathname: `/voting`,
+              query: { articleId, title, description },
+            }}
+            passHref
+          >
+            <Button variant="outline" onClick={handleVoteClick}>
+              Vote Now
+            </Button>
+          </Link>
+        )}
       </CardFooter>
     </Card>
   );
