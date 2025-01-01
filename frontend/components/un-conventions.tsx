@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect } from "react";
 
 const UNNews: React.FC = () => {
-  const [newsEntries, setNewsEntries] = useState<any[]>([]);  // Ensure it's an empty array initially
+  const [newsEntries, setNewsEntries] = useState<any[]>([]); // Ensure it's an empty array initially
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
@@ -15,10 +15,10 @@ const UNNews: React.FC = () => {
           throw new Error("Failed to fetch news.");
         }
         const data = await response.json();
-        
-        // Ensure data.news is an array
-        if (Array.isArray(data.news)) {
-          setNewsEntries(data.news);  // Access the 'news' property
+
+        // Access the correct property
+        if (Array.isArray(data.news_entries)) {
+          setNewsEntries(data.news_entries); // Access the 'news_entries' property
         } else {
           setError("Invalid data format received.");
         }
@@ -49,6 +49,14 @@ const UNNews: React.FC = () => {
               <h2 className="text-xl font-semibold">{entry.Title}</h2>
               <p className="text-gray-600">{entry.Published}</p>
               <p>{entry.Summary}</p>
+              <a
+                href={entry.Link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 underline"
+              >
+                Read more
+              </a>
             </div>
           ))
         )}

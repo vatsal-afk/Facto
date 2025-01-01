@@ -27,8 +27,8 @@ CORS(app)
 
 GUARDIAN_API_KEY = os.getenv('GUARDIAN_API_KEY')
 NEWS_API_KEY = os.getenv('NEWS_API_KEY')
-REDDIT_CLIENT_ID = os.getenv('REDDIT_CLIENT_ID')
-REDDIT_CLIENT_SECRET = os.getenv('REDDIT_CLIENT_SECRET')
+REDDIT_CLIENT_ID = "Vc0zoTH0IV6ErgqHpGtY5A"
+REDDIT_CLIENT_SECRET = "q8dCCrrMcMkYiwsm4aQ0WrG9-xM6aA"
 
 # Initialize Reddit client
 reddit = praw.Reddit(

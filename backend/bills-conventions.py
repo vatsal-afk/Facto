@@ -1,3 +1,5 @@
+import feedparser
+import json
 from flask import Flask, jsonify
 from flask_cors import CORS
 from bs4 import BeautifulSoup
@@ -9,6 +11,34 @@ import requests
 
 app = Flask(__name__)
 CORS(app)
+
+# RSS Feed URL for UN News
+RSS_URL = "https://news.un.org/feed/subscribe/en/news/all/rss.xml"
+
+# Function to fetch UN News RSS feed
+@app.route('/get_un_news', methods=['GET'])
+def get_un_news():
+    try:
+        # Parse the RSS feed
+        feed = feedparser.parse(RSS_URL)
+
+        # Extract and structure news entries
+        news_entries = []
+        for entry in feed.entries:
+            news_entry = {
+                "Title": entry.title,
+                "Link": entry.link,
+                "Published": entry.published,
+                "Summary": entry.summary
+            }
+            news_entries.append(news_entry)
+
+        # Return the news entries as JSON
+        return jsonify({"news_entries": news_entries})
+
+    except Exception as e:
+        return jsonify({"error": f"Failed to fetch UN news: {str(e)}"}), 500
+
 
 # Function to extract and limit summary content under <div class="body_content">
 def extract_content(url):
@@ -30,6 +60,7 @@ def extract_content(url):
             return f"Failed to retrieve page. Status code: {response.status_code}"
     except Exception as e:
         return f"Error fetching content: {str(e)}"
+
 
 # Endpoint to fetch bills
 @app.route('/get_bills', methods=['GET'])
@@ -91,6 +122,7 @@ def get_bills():
 
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True)

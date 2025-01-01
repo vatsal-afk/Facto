@@ -80,23 +80,23 @@ const TrendAnalysis: React.FC = () => {
       return;
     }
 
-    try {
-      const response = await fetch("/api/id", {  // Adjusted to match your endpoint
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ articleId, index }),
-      });
+    // try {
+    //   const response = await fetch("/api/id", {  // Adjusted to match your endpoint
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({ articleId, index }),
+    //   });
 
-      if (!response.ok) {
-        throw new Error("Failed to save vote");
-      }
+    //   if (!response.ok) {
+    //     throw new Error("Failed to save vote");
+    //   }
 
-      console.log("Vote saved successfully!");
-    } catch (error) {
-      console.error("Error saving vote:", error);
-    }
+    //   console.log("Vote saved successfully!");
+    // } catch (error) {
+    //   console.error("Error saving vote:", error);
+    // }
   };
 
   if (loading) return <div>Loading news...</div>;

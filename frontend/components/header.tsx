@@ -20,8 +20,12 @@ export default function Header() {
   console.log("Wallet connected:", connected)
 
   return (
-    <header className="bg-white dark:bg-gray-800 shadow-md py-4 px-6 flex justify-between items-center">
-      <h1 className="text-2xl font-bold">sachify.com (MisInfoBusters)</h1>
+    <header className="bg-[#112023] shadow-md py-1 px-6 flex justify-between items-center">
+      <img 
+        src="images/facto.jpeg" 
+        alt="Logo" 
+        className="max-w-xs h-auto object-contain" 
+      />
       <div className="flex items-center space-x-4">
         <Button
           variant="ghost"
@@ -38,7 +42,7 @@ export default function Header() {
         <Button>Sign in</Button>
         {connected ? (
           <div className="flex items-center space-x-2">
-            <span className="text-gray-600 dark:text-gray-300">
+            <span className="text-gray-600">
               {account ? `Connected: ${account.slice(0, 6)}...${account.slice(-4)}` : "Loading..."}
             </span>
             <Button onClick={disconnect}>Disconnect</Button>
