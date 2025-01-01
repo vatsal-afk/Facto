@@ -1,16 +1,15 @@
 import Image from "next/image";
-import Link from "next/link";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-// import { useDispatch } from "react-redux";
-// import { setArticleState } from "@/store/articleSlice";
 
 interface NewsItemProps {
   title: string;
   image: string;
   description: string;
   link?: string;
-  articleId?: number; // Ensure articleId is passed here
+  articleId?: string; // Ensure articleId is passed here
+  index?: number; // Include the index if needed
+  handleVoteClick: () => Promise<void>; // Add this line to pass the function
 }
 
 export function NewsItem({
@@ -19,15 +18,9 @@ export function NewsItem({
   description,
   link,
   articleId,
+  index,
+  handleVoteClick, // Destructure it here
 }: NewsItemProps) {
-  // const dispatch = useDispatch();
-
-  const handleVoteClick = () => {
-    if (articleId !== undefined) {
-      // dispatch(setArticleState({ articleId })); // Dispatch action to update Redux store
-      console.log(`Article ID set in Redux: ${articleId}`);
-    }
-  };
 
   return (
     <Card className="overflow-hidden flex flex-col">
@@ -50,17 +43,9 @@ export function NewsItem({
         >
           Read more
         </Button>
-        <Link
-          href={{
-            pathname: `/counter`,
-            query: { articleId, title, description },
-          }}
-          passHref
-        >
-          <Button variant="outline" onClick={handleVoteClick}>
-            Vote Now
-          </Button>
-        </Link>
+        <Button variant="outline" onClick={handleVoteClick}>
+          Vote Now
+        </Button>
       </CardFooter>
     </Card>
   );

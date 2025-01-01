@@ -1,12 +1,11 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { NewsItem } from "@/components/news-item";
 
-// import { useSelector } from 'react-redux';
-
+// Replace this with your actual Guardian API key
 const GUARDIAN_API_KEY = process.env.NEXT_PUBLIC_GUARDIAN_API_KEY;
 
 const sections = [
@@ -22,9 +21,6 @@ const TrendAnalysis: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Move useSelector to the top level
-  // const articleId = useSelector((state: any) => state.articleState.articleId);
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -44,6 +40,7 @@ const TrendAnalysis: React.FC = () => {
           return {
             category: section.category,
             articles: data.response.results.map((article: any) => ({
+              articleId: article.id,
               title: article.webTitle,
               image: article.fields?.thumbnail || "/placeholder.svg?height=200&width=300",
               description: article.fields?.trailText || "No description available",
@@ -77,6 +74,31 @@ const TrendAnalysis: React.FC = () => {
       : categoryNews;
   };
 
+  const handleVote = async (articleId: string, index: number) => {
+    if (!articleId || index === undefined) {
+      console.error("Article ID or index is missing!");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/id", {  // Adjusted to match your endpoint
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ articleId, index }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save vote");
+      }
+
+      console.log("Vote saved successfully!");
+    } catch (error) {
+      console.error("Error saving vote:", error);
+    }
+  };
+
   if (loading) return <div>Loading news...</div>;
   if (error) return <div>{error}</div>;
 
@@ -103,7 +125,9 @@ const TrendAnalysis: React.FC = () => {
                 image={newsItem.image}
                 description={newsItem.description}
                 link={newsItem.link}
-                // articleId={articleId}
+                articleId={newsItem.articleId}
+                index={index}
+                handleVoteClick={() => handleVote(newsItem.articleId, index)} // Pass down the vote handler
               />
             ))}
           </div>
