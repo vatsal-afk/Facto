@@ -65,21 +65,21 @@ const LiveNews: React.FC<{ setLiveNewsStreams: React.Dispatch<React.SetStateActi
   return null
 }
 
-const mockSentimentData = [
-  { time: '0:00', positive: 60, negative: 40, neutral: 20 },
-  { time: '0:05', positive: 65, negative: 35, neutral: 25 },
-  { time: '0:10', positive: 70, negative: 30, neutral: 22 },
-  { time: '0:15', positive: 68, negative: 32, neutral: 28 },
-  { time: '0:20', positive: 72, negative: 28, neutral: 24 },
-]
+// const mockSentimentData = [
+//   { time: '0:00', positive: 60, negative: 40, neutral: 20 },
+//   { time: '0:05', positive: 65, negative: 35, neutral: 25 },
+//   { time: '0:10', positive: 70, negative: 30, neutral: 22 },
+//   { time: '0:15', positive: 68, negative: 32, neutral: 28 },
+//   { time: '0:20', positive: 72, negative: 28, neutral: 24 },
+// ]
 
-const mockKeywordsData = [
-  { keyword: 'Economy', count: 15 },
-  { keyword: 'Politics', count: 12 },
-  { keyword: 'Technology', count: 10 },
-  { keyword: 'Healthcare', count: 8 },
-  { keyword: 'Education', count: 6 },
-]
+// const mockKeywordsData = [
+//   { keyword: 'Economy', count: 15 },
+//   { keyword: 'Politics', count: 12 },
+//   { keyword: 'Technology', count: 10 },
+//   { keyword: 'Healthcare', count: 8 },
+//   { keyword: 'Education', count: 6 },
+// ]
 
 export default function LiveBroadcastAnalysis() {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
@@ -281,7 +281,7 @@ export default function LiveBroadcastAnalysis() {
               </pre>
             </CardContent>
           </Card>
-          <Card>
+          {/* <Card> 
             <CardHeader>
               <CardTitle>Analysis</CardTitle>
             </CardHeader>
@@ -335,7 +335,7 @@ export default function LiveBroadcastAnalysis() {
                 </TabsContent>
               </Tabs>
             </CardContent>
-          </Card>
+          </Card>*/}
         </div>
       </div>
     </div>

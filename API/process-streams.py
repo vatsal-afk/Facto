@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_file,url_for
+from flask import Flask, request, jsonify, send_file, url_for
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 from sentence_transformers import SentenceTransformer, util
 import spacy
@@ -14,9 +14,9 @@ from flask_cors import CORS
 app = Flask(__name__, static_folder="D:/Projects/TT/TruthTell/API/static")
 CORS(app)
 
-# API Keys
-GUARDIAN_API_KEY = "8fc95a30-a0c7-4ad9-8a62-0d8d3af818cc"
-NEWS_API_KEY = "bfe85c82ec46409196e661c10c0957f2"
+# API Keys from environment variables
+GUARDIAN_API_KEY = os.getenv('GUARDIAN_API_KEY')
+NEWS_API_KEY = os.getenv('NEWS_API_KEY')
 
 # Model Initialization
 tokenizer = AutoTokenizer.from_pretrained("t5-small")
@@ -85,7 +85,7 @@ def create_knowledge_graph(summary):
     plt.savefig(filepath, format="PNG")
     plt.close()
 
-    return list(connected_nodes),filename
+    return list(connected_nodes), filename
 
 def fetch_related_content(query):
     # Guardian API
@@ -200,10 +200,8 @@ def verify_news():
                 best_article = article
         
         # Generate knowledge graph
-        connected_nodes,graph_filename=create_knowledge_graph(best_article)
+        connected_nodes, graph_filename = create_knowledge_graph(best_article)
         graph_url = url_for('static', filename=f'knowledge_graphs/{graph_filename}', _external=True)
-        
-      
         
         # Calculate scores
         scores = calculate_scores(news_text, best_article)

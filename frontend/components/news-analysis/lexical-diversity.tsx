@@ -18,3 +18,4 @@ export function LexicalDiversity({ diversity }: { diversity: number }) {
     </Card>
   )
 }
+

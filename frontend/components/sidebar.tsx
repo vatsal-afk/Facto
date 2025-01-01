@@ -20,10 +20,10 @@ const menuItems = [
   { icon: FileText, label: 'Custom News', href: '/custom-news' },
   { icon: TrendingUp, label: 'Trend Analysis', href: '/trend-analysis' },
   { icon: Radio, label: 'Live Broadcast', href: '/live-broadcast' },
-  { icon: Vote, label: 'Voting', href: '/voting' },
   {icon: BarChart2, label: 'Social Media Analysis', href: '/social-media-analysis' },
   { icon: MessageSquare, label: 'Discussions', href: '/discussions' },
   { icon: MessageSquare, label: 'Graph Analysis', href: '/graph-analysis' },
+  { icon: Vote, label: 'Vote', href: '/counter' },
 ]
 
 export default function AppSidebar() {

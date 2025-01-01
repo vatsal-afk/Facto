@@ -18,3 +18,4 @@ export function Similarity({ similarity }: { similarity: number }) {
     </Card>
   )
 }
+

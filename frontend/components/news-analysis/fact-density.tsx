@@ -18,3 +18,4 @@ export function FactDensity({ density }: { density: number }) {
     </Card>
   )
 }
+
