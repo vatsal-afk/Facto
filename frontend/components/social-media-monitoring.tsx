@@ -58,12 +58,12 @@ export default function SocialMediaAnalysis() {
 
       console.log('Analyzing URL:', url);
 
-      const response = await fetch('http://localhost:8000/verify_news', {
+      const response = await fetch('http://localhost:5000/scrape', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ news_text: url }),
+        body: JSON.stringify({ url:url }),
       });
 
       if (!response.ok) {
