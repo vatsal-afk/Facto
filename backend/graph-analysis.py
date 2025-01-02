@@ -21,6 +21,8 @@ sentiment_analyzer = pipeline('sentiment-analysis')
 nlp = spacy.load("en_core_web_sm")
 
 # Set up logging
+# Data storage
+article_store = []
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 app.config['KNOWLEDGE_GRAPH_DIR'] = 'static/knowledge_graphs'
@@ -79,81 +81,140 @@ def create_knowledge_graph(summary):
 
     return list(connected_nodes), filename
 
-# Function to fetch related content from external sources
 def fetch_related_content(query):
-    articles = []
+    # Guardian API
     search_url_guardian = "https://content.guardianapis.com/search"
     params_guardian = {
         "q": query,
-        "api-key": "YOUR_GUARDIAN_API_KEY",
+        "api-key": GUARDIAN_API_KEY,
         "show-fields": "headline,standfirst"
     }
     response_guardian = requests.get(search_url_guardian, params=params_guardian)
     articles_guardian = response_guardian.json().get('response', {}).get('results', [])
-
+    
+    # NewsAPI
     search_url_newsapi = "https://newsapi.org/v2/everything"
     params_newsapi = {
         "q": query,
-        "apiKey": "YOUR_NEWS_API_KEY",
+        "apiKey": NEWS_API_KEY,
         "language": "en",
         "sortBy": "relevancy"
     }
     response_newsapi = requests.get(search_url_newsapi, params=params_newsapi)
     articles_newsapi = response_newsapi.json().get('articles', [])
+    
+    # Process articles
+    for article in articles_guardian:
+        title = article.get("webTitle", "")
+        snippet = article["fields"].get("standfirst", "")
+        process_article(title, snippet)
 
-    for article in articles_guardian + articles_newsapi:
-        title = article.get("title", article.get("webTitle", ""))
-        snippet = article.get("description", article.get("fields", {}).get("standfirst", ""))
-        if title and snippet:
-            articles.append(f"{title} - {snippet}")
+    for article in articles_newsapi:
+        title = article.get("title", "")
+        snippet = article.get("description", "")
+        process_article(title, snippet)
 
-    return articles
+def process_article(title, snippet):
+    if snippet:
+        combined_text = f"{title} - {snippet}"
+        article_store.append(combined_text)
+
+def calculate_scores(input_text, related_snippet):
+    sentiment_score = sentiment_consistency(input_text, related_snippet)
+    fact_density = fact_density_score(input_text)
+    readability = readability_score(input_text)
+    lexical_diversity = lexical_diversity_score(input_text)
+    
+    return {
+        'sentiment_consistency': sentiment_score,
+        'fact_density': fact_density,
+        'readability': readability,
+        'lexical_diversity': lexical_diversity
+    }
+
+def sentiment_consistency(input_text, related_snippet):
+    input_sentiment = sentiment_analyzer(input_text)[0]['label']
+    related_sentiment = sentiment_analyzer(related_snippet)[0]['label']
+    return 1 if input_sentiment == related_sentiment else 0
+
+def fact_density_score(text):
+    doc = nlp(text)
+    entities = [ent.text for ent in doc.ents]
+    return len(entities) / len(text.split())
+
+def readability_score(text):
+    return flesch_reading_ease(text)
+
+def lexical_diversity_score(text):
+    words = text.split()
+    unique_words = set(words)
+    return len(unique_words) / len(words)
+
+def get_verdict(similarity_score):
+    if similarity_score > 0.4:
+        return "Real News"
+    elif similarity_score > 0.25:
+        return "Likely Real News"
+    elif similarity_score > 0.2:
+        return "Unverified"
+    else:
+        return "Likely Fake News"
 
 @app.route('/verify_news', methods=['POST'])
 def verify_news():
     try:
         data = request.get_json()
         news_text = data.get('news_text')
-
+        
         if not news_text:
             return jsonify({'error': 'No news text provided'}), 400
-
-        articles = fetch_related_content(news_text)
-        if not articles:
+        
+        # Clear previous data
+        article_store.clear()
+        
+        # Fetch and process related content
+        fetch_related_content(news_text)
+        
+        if not article_store:
             return jsonify({'error': 'No related content found'}), 404
-
+        
+        # Calculate similarity
         news_embedding = similarity_model.encode(news_text, convert_to_tensor=True)
         max_similarity = 0
         best_article = ""
-
-        for article in articles:
-            similarity = util.pytorch_cos_sim(news_embedding, similarity_model.encode(article, convert_to_tensor=True)).item()
+        
+        for article in article_store:
+            similarity = util.pytorch_cos_sim(
+                news_embedding,
+                similarity_model.encode(article, convert_to_tensor=True)
+            ).item()
+            
             if similarity > max_similarity:
                 max_similarity = similarity
                 best_article = article
-
+        
+        # Generate knowledge graph
         connected_nodes, graph_filename = create_knowledge_graph(best_article)
         graph_url = url_for('static', filename=f'knowledge_graphs/{graph_filename}', _external=True)
-
+        
+        # Calculate scores
+        scores = calculate_scores(news_text, best_article)
+        verdict = get_verdict(max_similarity)
+        
         response = {
             'status': 'success',
             'results': {
-                'scores': {
-                    'fact_density': 0.8,  # Placeholder values
-                    'lexical_diversity': 0.7,
-                    'readability': 60,
-                    'sentiment_consistency': 0.9,
-                },
+                'scores': scores,
                 'maximum_similarity': max_similarity,
-                'verdict': "Real News" if max_similarity > 0.8 else "Fake News",
+                'verdict': verdict,
                 'knowledge_graph': graph_url,
             }
         }
-
+        
         return jsonify(response)
-
+        
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
+        
 if __name__ == '__main__':
     app.run(debug=True, port=8000)
