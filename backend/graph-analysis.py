@@ -9,6 +9,13 @@ import os
 import requests
 import re
 import logging
+import matplotlib.pyplot as plt
+from dotenv import load_dotenv
+from textstat import flesch_reading_ease
+
+load_dotenv()
+GUARDIAN_API_KEY = os.getenv('GUARDIAN_API_KEY')
+NEWS_API_KEY = os.getenv('NEWS_API_KEY')
 
 app = Flask(__name__, static_folder="static")
 CORS(app)
