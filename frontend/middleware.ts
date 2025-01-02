@@ -5,18 +5,20 @@ import { NextResponse } from "next/server";
 const publicRoutes = [
   '/signin',
   '/signup',
-  '/register', // Allow access to the register route
+  '/register', // Ensure the register route is treated as public
   '/api/auth',
   '/_next',
   '/favicon.ico',
-  '/images'  // if you have a public images directory
+  '/images', // if you have a public images directory
+  '/api/userExists',
+  '/api/register',
 ];
 
 export default withAuth(
   function middleware(req) {
     const pathname = req.nextUrl.pathname;
 
-    // Check if the current path is a public route
+    // Allow access to public routes
     if (publicRoutes.some(route => pathname.startsWith(route))) {
       return NextResponse.next();
     }
@@ -33,7 +35,7 @@ export default withAuth(
     }
 
     // Protect admin routes
-    if (pathname.startsWith("/voting") && !isAdmin) {
+    if (pathname.startsWith("/counter") && !isAdmin) {
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
 
@@ -42,7 +44,7 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ req, token }) => {
-        // Skip auth check for public routes
+        // Allow public routes without a token
         if (publicRoutes.some(route => req.nextUrl.pathname.startsWith(route))) {
           return true;
         }
