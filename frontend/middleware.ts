@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 const publicRoutes = [
   '/signin',
   '/signup',
+  '/register', // Allow access to the register route
   '/api/auth',
   '/_next',
   '/favicon.ico',
@@ -15,7 +16,7 @@ const publicRoutes = [
 export default withAuth(
   function middleware(req) {
     const pathname = req.nextUrl.pathname;
-    
+
     // Check if the current path is a public route
     if (publicRoutes.some(route => pathname.startsWith(route))) {
       return NextResponse.next();

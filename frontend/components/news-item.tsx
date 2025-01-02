@@ -5,15 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useDispatch } from "react-redux";
 import { setArticleState } from "@/store/articleSlice";
 import { useSession } from "next-auth/react";
-
-interface NewsItemProps {
-  title: string;
-  image: string;
-  description: string;
-  link?: string;
-  articleId?: string;
-  index?: number;
-}
+import { useState } from "react";
 
 export function NewsItem({
   title,
@@ -21,18 +13,42 @@ export function NewsItem({
   description,
   link,
   articleId,
-  index,
-}: NewsItemProps) {
+}: {
+  title: string;
+  image: string;
+  description: string;
+  link?: string;
+  articleId?: string;
+}) {
   const dispatch = useDispatch();
   const { data: session } = useSession();
-  
-  // Check if user is admin
+  const [isLoading, setIsLoading] = useState(false);
+  const [receivedIndex, setReceivedIndex] = useState<number | null>(null);
   const isAdmin = session?.user?.role === "admin";
 
-  const handleVoteClick = () => {
-    if (articleId) {
-      dispatch(setArticleState({ articleId }));
-      console.log(`Article ID set in Redux: ${articleId}`);
+  const handleVoteClick = async () => {
+    if (articleId && !isLoading) {
+      setIsLoading(true);
+      try {
+        const response = await fetch('/api/article', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ articleId, title, summary: description }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          dispatch(setArticleState({ articleId, index: data.index }));
+          setReceivedIndex(data.index);
+          const link = document.createElement('a');
+          link.href = `/counter?articleId=${articleId}&summary=${encodeURIComponent(description)}&title=${encodeURIComponent(title)}&index=${data.index}`;
+          link.click();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        setIsLoading(false);
+      }
     }
   };
 
@@ -58,17 +74,13 @@ export function NewsItem({
           Read more
         </Button>
         {isAdmin && (
-          <Link
-            href={{
-              pathname: "/voting",
-              query: { articleId, title, description },
-            }}
-            passHref
+          <Button 
+            variant="outline" 
+            onClick={handleVoteClick}
+            disabled={isLoading}
           >
-            <Button variant="outline" onClick={handleVoteClick}>
-              Vote Now
-            </Button>
-          </Link>
+            {isLoading ? 'Processing...' : 'Vote Now'}
+          </Button>
         )}
       </CardFooter>
     </Card>
