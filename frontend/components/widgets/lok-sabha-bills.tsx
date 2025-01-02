@@ -4,8 +4,8 @@ import { Badge } from "@/components/ui/badge"
 export default function LokSabhaBills() {
   return (
     <Card className="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <CardHeader className="bg-blue-500 text-white">
-        <CardTitle className="text-lg font-semibold">Latest Lok Sabha Bills</CardTitle>
+      <CardHeader className="bg-orange-500 text-white rounded-t-md">
+        <CardTitle className="text-lg font-semibold">Legislative Section - Stay Updated with the Bills!</CardTitle>
       </CardHeader>
       <CardContent className="mt-4">
         <ul className="space-y-4">

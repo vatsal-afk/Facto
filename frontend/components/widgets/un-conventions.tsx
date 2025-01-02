@@ -4,8 +4,8 @@ import { Badge } from "@/components/ui/badge"
 export default function UNConventions() {
   return (
     <Card className="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <CardHeader className="bg-green-500 text-white">
-        <CardTitle className="text-lg font-semibold">UN Conventions</CardTitle>
+      <CardHeader className="bg-green-500 text-white rounded-t-md">
+        <CardTitle className="text-lg font-semibold">United Nations</CardTitle>
       </CardHeader>
       <CardContent className="mt-4">
         <ul className="space-y-4">

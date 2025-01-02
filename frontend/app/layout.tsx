@@ -9,7 +9,7 @@ import AppSidebar from '@/components/sidebar'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'Misinformation Detection System',
+  title: 'Facto',
   description: 'Real-Time Misinformation Detection and Verification System for Broadcast Media',
 }
 

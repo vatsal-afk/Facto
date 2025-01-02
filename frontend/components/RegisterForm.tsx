@@ -13,7 +13,7 @@ export default function RegisterForm() {
   const router = useRouter();
 // console.log(email);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e : any) => {
     e.preventDefault();
 
     if (!role || !email || !password) {

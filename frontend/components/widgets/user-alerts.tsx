@@ -47,8 +47,8 @@ export default function LiveEventAnalysis() {
 
   return (
     <Card className="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <CardHeader className="bg-indigo-500 text-white">
-        <CardTitle className="text-lg font-semibold">Live Event Analysis (India Elections)</CardTitle>
+      <CardHeader className="bg-teal-500 text-white rounded-t-md">
+        <CardTitle className="text-lg font-semibold">Whats's the B(l)uff?</CardTitle>
       </CardHeader>
       <CardContent className="mt-4">
         {loading ? (

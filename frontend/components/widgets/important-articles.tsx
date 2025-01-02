@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,8 +19,8 @@ export default function ImportantArticles() {
 
         // Check if the data contains articles
         if (data.status === "ok" && data.articles) {
-          // Limit the articles to a maximum of 10
-          setArticles(data.articles.slice(0, 10)); // Set the first 10 articles
+          // Limit the articles to a maximum of 12
+          setArticles(data.articles.slice(0, 12)); // Set the first 10 articles
         }
       } catch (error) {
         console.error("Error fetching articles:", error);
@@ -32,29 +32,53 @@ export default function ImportantArticles() {
 
   return (
     <Card className="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <CardHeader className="bg-indigo-500 text-white">
-        <CardTitle className="text-lg font-semibold">Important Articles</CardTitle>
+      <CardHeader className="bg-purple-500 text-white rounded-t-md">
+        <CardTitle className="text-lg font-semibold">Articles we recommend reading</CardTitle>
       </CardHeader>
       <CardContent className="mt-4">
-        <ul className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.length === 0 ? (
             <p className="text-center text-gray-600 dark:text-gray-300">Loading articles...</p>
           ) : (
             articles.map((article, index) => (
-              <li key={index}>
+              <div key={index} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                {/* Image */}
+                {article.urlToImage && (
+                  <img
+                    src={article.urlToImage}
+                    alt={article.title}
+                    className="w-full h-48 object-cover rounded-md mb-4"
+                  />
+                )}
+                {/* Article Title and Link */}
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  <a
+                    href={article.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200"
+                  >
+                    {article.title}
+                  </a>
+                </h3>
+                {/* Article Description */}
+                {article.description && (
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">{article.description}</p>
+                )}
+                {/* Read More Arrow */}
                 <a
                   href={article.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-between text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors duration-200"
                 >
-                  <span>{article.title}</span>
+                  <span>Read more</span>
                   <ArrowRight className="h-4 w-4" />
                 </a>
-              </li>
+              </div>
             ))
           )}
-        </ul>
+        </div>
       </CardContent>
     </Card>
   );
