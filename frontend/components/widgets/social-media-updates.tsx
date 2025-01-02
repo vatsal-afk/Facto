@@ -31,7 +31,7 @@ export default function SocialMediaUpdates() {
 
   return (
     <Card className="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <CardHeader className="bg-indigo-500 text-white">
+      <CardHeader className="bg-indigo-500 text-white rounded-t-md">
         <CardTitle className="text-lg font-semibold">Social Media Updates</CardTitle>
       </CardHeader>
       <CardContent className="mt-4 space-y-4">
