@@ -1,43 +1,19 @@
 from flask import Flask, request, jsonify, send_file, url_for
 from flask_cors import CORS
-from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 from sentence_transformers import SentenceTransformer, util
 import spacy
-from textstat import flesch_reading_ease
 import networkx as nx
-import matplotlib.pyplot as plt
-import requests
-import re
 import time
 import os
-import feedparser
-import json
-import subprocess
-from pytrends.request import TrendReq
-import praw
+import requests
+import re
 import logging
 
 app = Flask(__name__, static_folder="static")
 CORS(app)
 
-GUARDIAN_API_KEY = os.getenv('GUARDIAN_API_KEY')
-NEWS_API_KEY = os.getenv('NEWS_API_KEY')
-REDDIT_CLIENT_ID = "Vc0zoTH0IV6ErgqHpGtY5A"
-REDDIT_CLIENT_SECRET = "q8dCCrrMcMkYiwsm4aQ0WrG9-xM6aA"
-
-# Initialize Reddit client
-reddit = praw.Reddit(
-    client_id=REDDIT_CLIENT_ID,
-    client_secret=REDDIT_CLIENT_SECRET,
-    user_agent='python:ProdHub:0.1.0(by u/Cyphen4802)'
-)
-
-# Initialize other models
+# Initialize models
 tokenizer = AutoTokenizer.from_pretrained("t5-small")
 model = AutoModelForSeq2SeqLM.from_pretrained("t5-small")
 similarity_model = SentenceTransformer('all-MiniLM-L6-v2')
@@ -48,7 +24,6 @@ nlp = spacy.load("en_core_web_sm")
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 app.config['KNOWLEDGE_GRAPH_DIR'] = 'static/knowledge_graphs'
-article_store = []
 
 # Helper function to clean text
 def clean_text(text):
@@ -107,28 +82,25 @@ def create_knowledge_graph(summary):
 # Function to fetch related content from external sources
 def fetch_related_content(query):
     articles = []
-    # Fetch content from Guardian API
     search_url_guardian = "https://content.guardianapis.com/search"
     params_guardian = {
         "q": query,
-        "api-key": GUARDIAN_API_KEY,
+        "api-key": "YOUR_GUARDIAN_API_KEY",
         "show-fields": "headline,standfirst"
     }
     response_guardian = requests.get(search_url_guardian, params=params_guardian)
     articles_guardian = response_guardian.json().get('response', {}).get('results', [])
 
-    # Fetch content from News API
     search_url_newsapi = "https://newsapi.org/v2/everything"
     params_newsapi = {
         "q": query,
-        "apiKey": NEWS_API_KEY,
+        "apiKey": "YOUR_NEWS_API_KEY",
         "language": "en",
         "sortBy": "relevancy"
     }
     response_newsapi = requests.get(search_url_newsapi, params=params_newsapi)
     articles_newsapi = response_newsapi.json().get('articles', [])
 
-    # Process articles from both sources
     for article in articles_guardian + articles_newsapi:
         title = article.get("title", article.get("webTitle", ""))
         snippet = article.get("description", article.get("fields", {}).get("standfirst", ""))
@@ -137,7 +109,6 @@ def fetch_related_content(query):
 
     return articles
 
-# API endpoint to verify news
 @app.route('/verify_news', methods=['POST'])
 def verify_news():
     try:
@@ -147,7 +118,6 @@ def verify_news():
         if not news_text:
             return jsonify({'error': 'No news text provided'}), 400
 
-        article_store.clear()
         articles = fetch_related_content(news_text)
         if not articles:
             return jsonify({'error': 'No related content found'}), 404
@@ -157,10 +127,7 @@ def verify_news():
         best_article = ""
 
         for article in articles:
-            similarity = util.pytorch_cos_sim(
-                news_embedding,
-                similarity_model.encode(article, convert_to_tensor=True)
-            ).item()
+            similarity = util.pytorch_cos_sim(news_embedding, similarity_model.encode(article, convert_to_tensor=True)).item()
             if similarity > max_similarity:
                 max_similarity = similarity
                 best_article = article
@@ -171,9 +138,14 @@ def verify_news():
         response = {
             'status': 'success',
             'results': {
-                'scores': calculate_scores(news_text, best_article),
+                'scores': {
+                    'fact_density': 0.8,  # Placeholder values
+                    'lexical_diversity': 0.7,
+                    'readability': 60,
+                    'sentiment_consistency': 0.9,
+                },
                 'maximum_similarity': max_similarity,
-                'verdict': get_verdict(max_similarity),
+                'verdict': "Real News" if max_similarity > 0.8 else "Fake News",
                 'knowledge_graph': graph_url,
             }
         }
@@ -183,43 +155,5 @@ def verify_news():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Route to get trending topics from Reddit
-@app.route('/trending-topics-by-reddit', methods=['GET'])
-def get_trending_topics():
-    country = request.args.get('country', "india").lower()
-    try:
-        pytrends = TrendReq(hl='en-US', tz=360)
-        trending_searches = pytrends.trending_searches(pn=country)
-        top_3_trends = trending_searches.head(3)[0].tolist()
-        logging.info("Top 3 trending topics in {} are: {}".format(country, top_3_trends))
-
-        results = {}
-        for topic in top_3_trends:
-            subreddit_posts = []
-            for submission in reddit.subreddit("all").search(topic, sort="hot", limit=5):
-                post_data = {
-                    "title": submission.title,
-                    "url": submission.url,
-                    "score": submission.score,
-                    "thumbnail": get_thumbnail(submission)
-                }
-                subreddit_posts.append(post_data)
-            results[topic] = subreddit_posts
-
-        return jsonify({"country": country, "top_trends": top_3_trends, "reddit_posts": results})
-
-    except Exception as e:
-        logging.error(f"Error fetching trends: {e}")
-        return jsonify({"error": str(e)}), 500
-
-# Helper function to extract thumbnail URL from Reddit post
-def get_thumbnail(submission):
-    if hasattr(submission, 'media') and submission.media:
-        if 'reddit_video' in submission.media:
-            return submission.media['reddit_video'].get('preview', {}).get('images', [{}])[0].get('source', {}).get('url', None)
-        elif 'image' in submission.media:
-            return submission.media['image'].get('source', {}).get('url', None)
-    return None
-
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=8000)

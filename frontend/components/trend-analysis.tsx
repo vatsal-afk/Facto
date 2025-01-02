@@ -126,8 +126,7 @@ const TrendAnalysis: React.FC = () => {
                 description={newsItem.description}
                 link={newsItem.link}
                 articleId={newsItem.articleId}
-                index={index}
-                handleVoteClick={() => handleVote(newsItem.articleId, index)} // Pass down the vote handler
+                // index={index}
               />
             ))}
           </div>

@@ -34,7 +34,7 @@ const UNNews: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-semibold mb-4">UN News</h1>
+      {/* <h1 className="text-2xl font-semibold mb-4 text-center">United Nations News</h1> */}
 
       {loading && <p>Loading news...</p>}
 
@@ -42,7 +42,7 @@ const UNNews: React.FC = () => {
 
       <div className="space-y-4">
         {newsEntries.length === 0 ? (
-          <p>No news entries found.</p>
+          <p></p> // No data found
         ) : (
           newsEntries.map((entry, index) => (
             <div key={index} className="border p-4 rounded-lg shadow-md">

@@ -63,7 +63,7 @@ const TrendsAndHashtags = () => {
 
   return (
     <Card className="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <CardHeader className="bg-yellow-500 text-white">
+      <CardHeader className="bg-yellow-500 text-white rounded-t-md">
         <CardTitle className="text-lg font-semibold">Trends and Hashtags</CardTitle>
       </CardHeader>
       <CardContent className="mt-4">

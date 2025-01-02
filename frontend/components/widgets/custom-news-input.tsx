@@ -51,11 +51,11 @@ export default function DashboardCard() {
 
   return (
     <Card className="bg-white dark:bg-gray-800 shadow-lg">
-      <CardHeader className="bg-blue-500 text-white">
-        <CardTitle className="text-lg font-semibold">Input News to verify!</CardTitle>
+      <CardHeader className="bg-pink-500 text-white rounded-t-md">
+        <CardTitle className="text-lg font-semibold">Got something to Verify? Input here:</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6 p-4">
-        <h2 className="text-xl font-semibold">Enter News Details</h2>
+        <h2 className="text-xl font-semibold bg-gray-200 p-4 rounded-md">Enter text description / Article text</h2>
         <form onSubmit={handleNewsSubmit} className="space-y-4">
           <Textarea
             placeholder="News Content"
@@ -63,10 +63,10 @@ export default function DashboardCard() {
             onChange={(e) => setContent(e.target.value)}
             required
           />
-          <Button type="submit">Submit News</Button>
+          <Button type="submit" className="mx-auto block">Submit News</Button>
         </form>
 
-        <h2 className="text-xl font-semibold">Submit a Link</h2>
+        <h2 className="text-xl font-semibold bg-gray-200 p-4 rounded-md">Submit a Link to an Article...</h2>
         <form onSubmit={handleLinkSubmit} className="space-y-4">
           <Input
             type="text"
@@ -75,13 +75,13 @@ export default function DashboardCard() {
             onChange={(e) => setLink(e.target.value)}
             required
           />
-          <Button type="submit">Submit a Link</Button>
+          <Button type="submit" className="mx-auto block">Submit a Link</Button>
         </form>
 
-        <h2 className="text-xl font-semibold">Upload a File</h2>
+        <h2 className="text-xl font-semibold bg-gray-200 p-4 rounded-md">Got a File? no worries.</h2>
         <form onSubmit={handleFileSubmit} className="space-y-4">
           <Input type="file" name="file" />
-          <Button type="submit">Submit File</Button>
+          <Button type="submit" className="mx-auto block">Submit File</Button>
         </form>
       </CardContent>
     </Card>

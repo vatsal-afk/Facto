@@ -11,24 +11,23 @@ import AlertUser from '@/components/widgets/user-alerts';
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-grey-100 to-grey-100 dark:from-gray-900 dark:to-gray-800">
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 space-y-6">
         <BreakingNewsBanner />
-        <AlertUser />
-
+        <FakeNewsAlert />
         <div className="flex items-start gap-4 mt-4">
           <div className="flex-1 space-y-6">
+            <CustomNews />
             <img src="/images/fakes.png" alt="Dashboard Image" className="w-full h-auto rounded-md shadow-md" />
             <TrendsAndHashtags />
-            <ImportantArticles />
           </div>
           <div className="flex-1 space-y-6">
-            <FakeNewsAlert />
-            <CustomNews />
             <LokSabhaBills />
             <UNConventions />
+            <AlertUser />
             <SocialMediaUpdates />
           </div>
         </div>
+        <ImportantArticles />
       </main>
     </div>
   )

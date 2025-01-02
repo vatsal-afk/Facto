@@ -30,7 +30,7 @@ const Legislature: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-semibold mb-4">Legislative Bills</h1>
+      {/* <h1 className="text-2xl font-semibold mb-4">Legislative Bills</h1> */}
 
       {loading && <p>Loading bills...</p>}
 
@@ -38,7 +38,7 @@ const Legislature: React.FC = () => {
 
       <div className="space-y-4">
         {bills.length === 0 ? (
-          <p>No bills found.</p>
+          <p></p> // No bills found
         ) : (
           bills.map((bill) => (
             <div key={bill.index} className="bg-gray p-4 rounded-lg shadow-md">
