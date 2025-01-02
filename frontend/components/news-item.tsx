@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useDispatch } from "react-redux";
@@ -10,9 +11,8 @@ interface NewsItemProps {
   image: string;
   description: string;
   link?: string;
-  articleId?: string; // Ensure articleId is passed here
-  index?: number; // Include the index if needed
-  handleVoteClick: () => Promise<void>; // Add this line to pass the function
+  articleId?: string;
+  index?: number;
 }
 
 export function NewsItem({
@@ -22,14 +22,15 @@ export function NewsItem({
   link,
   articleId,
   index,
-  handleVoteClick, // Destructure it here
 }: NewsItemProps) {
   const dispatch = useDispatch();
   const { data: session } = useSession();
+  
+  // Check if user is admin
   const isAdmin = session?.user?.role === "admin";
 
   const handleVoteClick = () => {
-    if (articleId !== undefined) {
+    if (articleId) {
       dispatch(setArticleState({ articleId }));
       console.log(`Article ID set in Redux: ${articleId}`);
     }
@@ -59,7 +60,7 @@ export function NewsItem({
         {isAdmin && (
           <Link
             href={{
-              pathname: `/voting`,
+              pathname: "/voting",
               query: { articleId, title, description },
             }}
             passHref
