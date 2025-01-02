@@ -6,16 +6,35 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
+interface RedditPost {
+  title: string;
+  url: string;
+  thumbnail: string;
+  score: number;
+}
+
+interface TrendingTopics {
+  reddit_posts: {
+    [key: string]: RedditPost[];
+  };
+}
+
+interface MisinformationData {
+  platform: string;
+  misinformation: number;
+  factualContent: number;
+}
+
 export default function SocialMediaAnalysis() {
-  const [data, setData] = useState([])
-  const [url, setUrl] = useState('')
-  const [trendingTopics, setTrendingTopics] = useState(null)
-  const [error, setError] = useState(null)
+  const [data, setData] = useState<MisinformationData[]>([]);
+  const [url, setUrl] = useState<string>('');
+  const [trendingTopics, setTrendingTopics] = useState<TrendingTopics | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchTrendingAndRedditPosts = async () => {
       try {
-        const response = await fetch('http://localhost:5001/trending-topics-by-reddit');
+        const response = await fetch('http://localhost:8080/trending-topics-by-reddit');
         if (!response.ok) {
           throw new Error('Failed to fetch data from the server');
         }
@@ -23,32 +42,13 @@ export default function SocialMediaAnalysis() {
         setTrendingTopics(data); // Store data in state
       } catch (err) {
         console.error(err);
-        setError(err.message); // Store error in state
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
       }
     };
 
     fetchTrendingAndRedditPosts();
   }, []);
 
-  // Fetch trending topics and Reddit posts
-  useEffect(() => {
-    const fetchTrendingAndRedditPosts = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/trending-topics-by-reddit');
-        if (!response.ok) {
-          throw new Error('Failed to fetch data from the server');
-        }
-        const data = await response.json();
-        setTrendingTopics(data); // Store trending topics and Reddit posts
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchTrendingAndRedditPosts();
-  }, []);
-
-  // Handle analysis of the social media post URL
   const handleAnalyze = async () => {
     try {
       if (!url) {
@@ -58,22 +58,20 @@ export default function SocialMediaAnalysis() {
 
       console.log('Analyzing URL:', url);
 
-      // Sending the URL to the backend for analysis
-      const response = await fetch('http://localhost:5000/analyze-url', {
+      const response = await fetch('http://localhost:8000/verify_news', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ news_text: url }),
       });
 
       if (!response.ok) {
         throw new Error('Failed to analyze the URL.');
       }
 
-      // The backend returns the data directly
       const analysisData = await response.json();
-      setData(analysisData); // Update state with the backend analysis data
+      setData(analysisData.results.scores); // Assuming `results.scores` contains the data for the chart
 
     } catch (err) {
       console.error(err);
@@ -82,35 +80,38 @@ export default function SocialMediaAnalysis() {
 
   return (
     <div className="space-y-6">
-      {/* Render Reddit posts before the Card */}
+      {/* Render Trending Topics and Reddit Posts as Cards */}
       {trendingTopics && (
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Trending Topics and Reddit Posts</h2>
+          <h1 className="text-xl font-semibold text-center">Dive into Reddit Posts</h1>
           {Object.entries(trendingTopics.reddit_posts).map(([topic, posts]) => (
-            <div key={topic} className="space-y-2">
+            <div key={topic} className="space-y-4">
               <h3 className="text-lg font-medium">{topic}</h3>
-              <ul>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {posts.map((post, index) => (
-                  <li key={index} className="border-b pb-2">
-                    <div className="flex items-center space-x-4">
-                      {/* Render Thumbnail Image if available */}
-                      {post.thumbnail && (
-                        <img
-                          src={post.thumbnail}
-                          alt={post.title}
-                          className="w-16 h-16 object-cover rounded-md"
-                        />
-                      )}
-                      <div>
-                        <a href={post.url} target="_blank" rel="noopener noreferrer" className="text-blue-600">
-                          {post.title}
+                  <Card key={index} className="border p-4 shadow-md">
+                    <CardHeader>
+                      <CardTitle className="text-xl font-semibold">{post.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {/* Render Thumbnail Image if available */}
+                        {post.thumbnail && (
+                          <img
+                            src={post.thumbnail}
+                            alt={post.title}
+                            className="w-full h-40 object-cover rounded-md"
+                          />
+                        )}
+                        <a href={post.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                          Read more
                         </a>
                         <p className="text-sm text-gray-500">Score: {post.score}</p>
                       </div>
-                    </div>
-                  </li>
+                    </CardContent>
+                  </Card>
                 ))}
-              </ul>
+              </div>
             </div>
           ))}
         </div>

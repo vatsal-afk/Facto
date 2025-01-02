@@ -14,12 +14,16 @@ cd "$(dirname "$0")/backend"
 echo "Running bills-conventions.py..."
 python3 bills-conventions.py
 
-# Execute the scripts.py script
-echo "Running scripts.py..."
-python3 scripts.py
+# Execute the graph-analysis.py script
+echo "Running graph-analysis.py..."
+python3 graph-analysis.py
+
+# Execute the reddit-posts.py script
+echo "Running reddit-posts.py..."
+python3 reddit-posts.py
 
 # Print a success message
-echo "Both scripts executed successfully!"
+echo "All scripts executed successfully!"
 
 # Deactivate the virtual environment
 deactivate

@@ -35,7 +35,7 @@ const menuItems = [
   { icon: BarChart2, label: "Social Media Analysis", href: "/social-media-analysis" },
   { icon: Vote, label: "Vote", href: "/counter" },
   { icon: Globe, label: "United Nations", href: "/un" },
-  { icon: Gavel, label: "Know about Legislative Bills", href: "/bills" },
+  { icon: Gavel, label: "Legislative Bills", href: "/bills" },
   { icon: MessageSquare, label: "Discussions", href: "/discussions" },
   { icon: User, label: "About the Developers", href: "/about-us" },
   { icon: Mail, label: "Contact Us", href: "/contact-us" },
