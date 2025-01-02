@@ -3,83 +3,44 @@
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
+import { useSearchParams } from 'next/navigation';
 
-const contractAddress = "0xf54b33BC3DAc69b5B862b018A9CEb32854b49Bf6"; // Update with your deployed contract address
+const contractAddress = "0xf54b33BC3DAc69b5B862b018A9CEb32854b49Bf6";
 const abi = [
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "articles",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "upvote",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "downvote",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "articleId",
-				"type": "uint256"
-			}
-		],
-		"name": "downvote",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "articleId",
-				"type": "uint256"
-			}
-		],
-		"name": "getVotes",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "upvotes",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "downvotes",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "articleId",
-				"type": "uint256"
-			}
-		],
-		"name": "upvote",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	}
+  {
+    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    name: "articles",
+    outputs: [
+      { internalType: "uint256", name: "upvote", type: "uint256" },
+      { internalType: "uint256", name: "downvote", type: "uint256" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "articleId", type: "uint256" }],
+    name: "downvote",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "articleId", type: "uint256" }],
+    name: "getVotes",
+    outputs: [
+      { internalType: "uint256", name: "upvotes", type: "uint256" },
+      { internalType: "uint256", name: "downvotes", type: "uint256" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "articleId", type: "uint256" }],
+    name: "upvote",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];
 
 const Counter: React.FC = () => {
@@ -87,8 +48,11 @@ const Counter: React.FC = () => {
   const [upvotes, setUpvotes] = useState<number>(0);
   const [downvotes, setDownvotes] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const searchParams = useSearchParams();
 
   const fetchVotes = async () => {
+    if (typeof window === 'undefined' || !window.ethereum) return;
+
     const provider = new ethers.BrowserProvider(window.ethereum);
     const contract = new ethers.Contract(contractAddress, abi, provider);
 
@@ -102,7 +66,7 @@ const Counter: React.FC = () => {
   };
 
   const handleVote = async (type: "upvote" | "downvote") => {
-    if (!window.ethereum) {
+    if (typeof window === 'undefined' || !window.ethereum) {
       alert("Please install MetaMask!");
       return;
     }
@@ -125,6 +89,14 @@ const Counter: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const index = searchParams.get('index');
+    if (index) {
+      const incomingIndex = Number(index);
+      setArticleId(incomingIndex);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (articleId > 0) fetchVotes();
@@ -162,3 +134,4 @@ const Counter: React.FC = () => {
 };
 
 export default Counter;
+

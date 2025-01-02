@@ -126,7 +126,7 @@ const TrendAnalysis: React.FC = () => {
                 description={newsItem.description}
                 link={newsItem.link}
                 articleId={newsItem.articleId}
-                index={index}
+                // index={index}
               />
             ))}
           </div>
