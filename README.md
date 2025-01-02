@@ -66,11 +66,11 @@ To run the Misinformation Detection System, follow these steps:
 
 # Features
 1. [Custom News Input for checking](#1-fake-news-verification-model)
-2. Graphical analysis of custom news
+2. [Graphical analysis of custom news](#graphical-output)
 3. [Youtube news verification system](#2-live-news-verfication-from-youtube)
 4. [Voting page for verified users](#how-to-become-a-verified-user)
 5. [Discussion page for general users](https://github.com/MaSsKmAn/TruthTell/edit/main/README.md#how-to-join-the-discussion-)
-6. Social media display and Trending news display
+6. [Social media display and Trending news display](#webscrapping-the-recent-news)
 
 ## How to become a verified user?
 To enhance the instructiveness and credibility of the website, users can become **verified users** based on their discussions and posts, particularly for well-known professionals or individuals contributing positively to the platform.
@@ -136,6 +136,11 @@ Join the Discussion
 - **Real-Time Interaction**:  
   All submitted content is displayed in real-time, allowing for an interactive and dynamic discussion environment.
 
+### Webscrapping the recent news
+
+This analysis focuses on extracting the most recent 50 trending news articles from The Guardian and News API, along with popular posts from Reddit. The project leverages Python's Beautiful Soup library for parsing HTML and XML, Requests for handling HTTP requests, and the praw library for accessing Reddit's API. Additionally, News API integration is utilized for structured and real-time news retrieval. The scraped data is processed and stored efficiently for analysis and insights. This approach enables the collection of diverse and up-to-date content from reliable news sources and social media platforms.
+
+
 # About the models
 
 ## 1. Fake News Verification Model
@@ -170,6 +175,9 @@ The primary decision parameter is the **similarity score** based on the distance
 4. **Similarity Calculation**: The distance between the embeddings of the input news and the external content is calculated. A lower distance indicates higher similarity.
 5. **Additional Parameters**: Fact density, lexical diversity, sentiment score, and readability are calculated and used to refine the final decision.
 6. **Output**: The model returns a similarity score, verdict (True, False, or somewhere in between), and additional insights into the content quality.
+### Graphical output 
+
+For making the output more enhanced we have inserted graphs in them to give a visual refrence to what we are seeing and for this we have used bar charts for all the scores, iteractive signs for positive and negative sentiment and Verdict displayed in a playful manner.
 
 ## 2. Live News Verfication from YouTube
 
