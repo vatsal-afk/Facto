@@ -11,11 +11,10 @@ export default function RegisterForm() {
   const [error, setError] = useState("");
 
   const router = useRouter();
-// console.log(email);
 
-  const handleSubmit = async (e : any) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     if (!role || !email || !password) {
       setError("All fields are necessary.");
       return;
@@ -67,22 +66,48 @@ export default function RegisterForm() {
         <h1 className="text-xl font-bold my-4">Register</h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <input
-            onChange={(e) => setRole(e.target.value)}
-            type="text"
-            placeholder="Role"
-          />
+          
+          
           <input
             onChange={(e) => setEmail(e.target.value)}
             type="text"
             placeholder="Email"
+            className="px-4 py-2 border rounded-lg"
           />
           <input
             onChange={(e) => setPassword(e.target.value)}
             type="password"
             placeholder="Password"
+            className="px-4 py-2 border rounded-lg"
           />
-          <button className="bg-green-600 text-white font-bold cursor-pointer px-6 py-2">
+          <div className="flex gap-4 items-center">
+            <p>ROLE:</p>
+            <div className="flex items-center">
+              <input
+                type="radio"
+                id="user"
+                name="role"
+                value="user"
+                checked={role === "user"}
+                onChange={(e) => setRole(e.target.value)}
+                className="mr-2"
+              />
+              <label htmlFor="user">User</label>
+            </div>
+            <div className="flex items-center">
+              <input
+                type="radio"
+                id="admin"
+                name="role"
+                value="admin"
+                checked={role === "admin"}
+                onChange={(e) => setRole(e.target.value)}
+                className="mr-2"
+              />
+              <label htmlFor="admin">Admin</label>
+            </div>
+          </div>
+          <button className="bg-green-600 text-white font-bold cursor-pointer px-6 py-2 rounded-lg hover:bg-green-700">
             Register
           </button>
 
