@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SentimentAnalysis } from "./sentiment-analysis";
 import { ReadabilityScore } from "./readability-score";
 import { MetricsAnalysis } from "./metrics-analysis";
@@ -20,6 +20,7 @@ interface Scores {
 
 interface AnalysisData {
   results: {
+    best_article: string;
     knowledge_graph: string;
     maximum_similarity: number;
     scores: Scores;
@@ -88,8 +89,25 @@ export function NewsAnalysisReport() {
       ]
     : [];
 
+  const bestArticle = analysisData?.results?.best_article || "No article data available.";
+
   return (
     <div className="space-y-8">
+      {/* News Header */}
+      <Card className="bg-white dark:bg-gray-800">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">Best Article</CardTitle>
+          <CardDescription>Analyzed Content</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div
+            className="text-gray-600 dark:text-gray-300"
+            dangerouslySetInnerHTML={{ __html: bestArticle }}
+          />
+        </CardContent>
+      </Card>
+
+      {/* Verdict */}
       <Card className={`bg-gradient-to-r ${verdictDisplay.colors}`}>
         <CardHeader>
           <CardTitle className="text-center text-3xl">Verdict</CardTitle>
