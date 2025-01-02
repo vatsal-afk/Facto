@@ -9,10 +9,13 @@ import { useTheme } from "next-themes";
 import { useWallet } from "@/app/WalletContext";
 import WalletIcon from "@/public/WalletIcon";
 
+import { signOut ,useSession} from "next-auth/react";
+
 export default function Header() {
   const { theme, setTheme } = useTheme();
   const { connected, account, connect, disconnect } = useWallet();
   const [showFullAccount, setShowFullAccount] = useState(false);
+  const { data: session } = useSession();
 
   useEffect(() => {
     // Debugging wallet details
@@ -95,16 +98,35 @@ export default function Header() {
               <WalletIcon className="h-5 w-5" />
               <span>Disconnect</span>
             </Button>
+
+            {/* Logout Button */}
+            <Button
+              onClick={() => signOut()}
+              className="px-4 bg-red-600 hover:bg-red-700 text-white"
+            >
+              {session?"Logout":"Login"}
+            </Button>
           </div>
         ) : (
-          <Button
-            onClick={connect}
-            variant="outline"
-            className="flex items-center space-x-2"
-          >
-            <WalletIcon className="h-5 w-5" />
-            <span>Connect Wallet</span>
-          </Button>
+          <div className="flex items-center space-x-2">
+            {/* Connect Wallet Button */}
+            <Button
+              onClick={connect}
+              variant="outline"
+              className="flex items-center space-x-2"
+            >
+              <WalletIcon className="h-5 w-5" />
+              <span>Connect Wallet</span>
+            </Button>
+
+            {/* Logout Button */}
+            {/* <Button
+              onClick={() => signOut()}
+              className="px-4 bg-red-600 hover:bg-red-700 text-white"
+            >
+              Logout
+            </Button> */}
+          </div>
         )}
       </div>
     </header>
