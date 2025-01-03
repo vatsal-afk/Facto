@@ -17,7 +17,7 @@ export default function DashboardCard() {
     console.log('Sending to server:', requestBody)
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/verify_news', {
+      const response = await fetch('http://127.0.0.1:8000/verify_news', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
