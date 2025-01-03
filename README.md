@@ -60,13 +60,12 @@ REDDIT_CLIENT_SECRET=your_reddit_api_secret`
 1.  [Custom News Input for Verification](#1-fake-news-verification-model)
 2.  [Graphical Analysis of Custom News](#graphical-output)
 3.  [YouTube News Verification System](#2-live-news-verification-from-youtube)
-4.  [Blockchain-Based Voting for Verified Users](#how-to-become-a-verified-user)
-5.  [Discussion Forum for General Users](#how-to-join-the-discussion)
-6.  [Trending News and Social Media Insights](#webscraping-the-recent-news)
+4.  [Role-Based Access Control](#how-to-become-a-verified-user)
+5.  [Blockchain-Based Voting for Verified Users](#voting-feature)
+6.  [Discussion Forum for General Users](#how-to-join-the-discussion)
+7.  [Trending News and Social Media Insights](#webscraping-the-recent-news)
 
-## How to Become a Verified User?
 
-To improve the reliability and credibility of the platform, users can become **verified** based on their contributions, such as sharing news insights or engaging in discussions. This feature is designed for professionals or individuals who actively contribute to the platform’s goals.
 
 ### How to Become a Verified User ✅
 
