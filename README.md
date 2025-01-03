@@ -4,6 +4,8 @@
 
 ---
 
+![App Screenshot](app_screenshots/image1.png)
+
 ## Project Setup
 
 ### Prerequisites
@@ -28,7 +30,7 @@ Ensure that you have the following software installed before setting up the proj
 2.  **Set up the Backend**:
 Navigate to the `@/streaming` :
 ```bash
-	chmod +x run_backend.sh
+   chmod +x run_backend.sh
    ./run_backend.sh
    ``` 
 3.  **Set up the Frontend**:
@@ -121,7 +123,18 @@ To improve the reliability and credibility of the platform, users can become **v
 
 ----------
 
+### Voting feature:
+
+![App Screenshot](app_screenshots/image.png)
+
+screenshots of the voting page:
+
+![App Screenshot](app_screenshots/image3.png)
+![App Screenshot](app_screenshots/image2.png)
+
 ## Web Scraping for Recent News
+
+![App Screenshot](app_screenshots/image4.png)
 
 This feature collects and analyzes the latest news articles from reliable sources like The Guardian, Reddit, and News API. Using libraries like **BeautifulSoup** for HTML parsing, **Requests** for HTTP requests, and **praw** for accessing Reddit’s API, the platform retrieves diverse and up-to-date content. The data is then processed for analysis and insights, ensuring relevant news is always available for verification.
 
@@ -158,6 +171,8 @@ This model verifies the authenticity of news by comparing custom inputs to trust
 ## 2. Live News Verification from YouTube
 
 This model verifies news from YouTube videos using a multi-step process that extracts audio, transcribes it, and analyzes the content for authenticity. It relies on advanced **audio-to-text transcription** and **NLP-based chunking** to evaluate the news in smaller, context-specific pieces.
+
+![App Screenshot](app_screenshots/image5.png)
 
 ### Key Features:
 
@@ -218,3 +233,5 @@ sequenceDiagram
     Note right of LiveBroadcast: Extracting and transcribing YouTube live videos
     Note right of GraphAnalysis: Web scraping and graph-based news analysis
 ```
+### Thank You!
+Developed by Vatsal, Vishesh, Tanmay and Aman 🚀
