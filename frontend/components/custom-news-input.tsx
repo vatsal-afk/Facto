@@ -89,7 +89,7 @@ export default function CustomNewsInput() {
       </Card>
 
       {/* File Upload Card */}
-      <Card className="bg-white dark:bg-gray-800 shadow-lg">
+      {/* <Card className="bg-white dark:bg-gray-800 shadow-lg">
         <CardHeader className="bg-pink-500 text-white rounded-t-md">
           <CardTitle className="text-lg font-semibold">Got a File? No Worries.</CardTitle>
         </CardHeader>
@@ -99,7 +99,7 @@ export default function CustomNewsInput() {
             <Button type="submit">Submit File</Button>
           </form>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   )
 }
