@@ -19,7 +19,11 @@ Ensure that you have the following software installed before setting up the proj
 
 - This project uses shadcn/ui components. If you need to add more components, you can do so using the following command:
 
-```npx shadcn@latest add [component-name]```
+```
+npm install -g shadcn
+shadcn init
+shadcn add --all --dir ui
+```
 
 ### Steps to Set Up the Project
 
