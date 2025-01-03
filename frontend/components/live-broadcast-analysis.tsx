@@ -96,7 +96,7 @@ export default function LiveBroadcastAnalysis() {
   useEffect(() => {
     const fetchTranscription = async () => {
       try {
-        const transcriptionRes = await fetch('public/transcription/output_audio.txt')
+        const transcriptionRes = await fetch('http://localhost:5500/process')
         console.log(transcriptionRes);
         if (transcriptionRes.ok) {
           const text = await transcriptionRes.text()
