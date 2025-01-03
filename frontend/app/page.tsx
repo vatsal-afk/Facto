@@ -16,6 +16,7 @@ export default function Home() {
         <FakeNewsAlert />
         <div className="flex items-start gap-4 mt-4">
           <div className="flex-1 space-y-6">
+            <img src="/images/map.png" alt="Fake News Map" className="w-full h-auto rounded-md shadow-md" />
             <CustomNews />
             <img src="/images/fakes.png" alt="Dashboard Image" className="w-full h-auto rounded-md shadow-md" />
             <TrendsAndHashtags />
@@ -25,6 +26,7 @@ export default function Home() {
             <UNConventions />
             <AlertUser />
             <SocialMediaUpdates />
+            <img src="/images/image.png" alt="Fake News Map" className="w-full h-auto rounded-md shadow-md" />
           </div>
         </div>
         <ImportantArticles />

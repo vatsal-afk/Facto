@@ -11,7 +11,7 @@ import time
 import os
 from flask_cors import CORS
 
-app = Flask(__name__, static_folder="D:/Projects/TT/TruthTell/API/static")
+app = Flask(__name__, static_folder="static")
 CORS(app)
 
 # API Keys from environment variables
@@ -27,7 +27,7 @@ nlp = spacy.load("en_core_web_sm")
 
 # Data storage
 article_store = []
-app.config['KNOWLEDGE_GRAPH_DIR'] = 'D:/Projects/TT/TruthTell/API/static/knowledge_graphs'
+app.config['KNOWLEDGE_GRAPH_DIR'] = 'static/knowledge_graphs'
 
 def clean_text(text):
     text = re.sub(r'<.*?>', '', text)

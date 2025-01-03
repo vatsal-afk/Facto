@@ -94,6 +94,21 @@ export default function LiveBroadcastAnalysis() {
   const [eventSource, setEventSource] = useState<EventSource | null>(null)
 
   useEffect(() => {
+    const fetchTranscription = async () => {
+      try {
+        const transcriptionRes = await fetch('public/transcription/output_audio.txt')
+        console.log(transcriptionRes);
+        if (transcriptionRes.ok) {
+          const text = await transcriptionRes.text()
+          setTranscription(text)
+        } else {
+          setTranscription("Failed to load transcription.")
+        }
+      } catch (err) {
+        console.error("Error reading transcription:", err)
+        setTranscription("Failed to load transcription.")
+      }
+    }
     return () => {
       if (eventSource) {
         eventSource.close()
@@ -140,7 +155,7 @@ export default function LiveBroadcastAnalysis() {
     try {
       console.log("Sending video URL to backend:", draggedVideo.url);
   
-      const response = await fetch("http://localhost:8000/transcribe", {
+      const response = await fetch("http://localhost:5001/transcribe", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -170,7 +185,7 @@ export default function LiveBroadcastAnalysis() {
     }
     try {
       console.log("Sending video URL to backend:", draggedVideo.url);
-      const response = await fetch("http://localhost:8000/transcribe", {
+      const response = await fetch("http://localhost:5001/transcribe", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
