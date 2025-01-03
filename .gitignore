@@ -48,19 +48,14 @@ jspm_packages/
 
 streaming/node_modules
 streaming/segments
+streaming/transcription
 streaming/venv
+streaming/.env
 
 backend/env
 backend/venv
 backend/node_modules
-backend/segments
-
-backendddd/env
-backendddd/venv
-backendddd/node_modules
-backendddd/segments
-
-API/venv/
+backend/static/knowledge_graphs
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/

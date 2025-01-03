@@ -20,6 +20,14 @@ python3 graph-analysis.py &
 echo "Running reddit-posts.py..."
 python3 reddit-posts.py &
 
+cd "$(dirname "$0")/streaming"
+
+echo "Running server.js..."
+node server.js &
+
+echo "Running app.py..."
+python3 app.py &
+
 # Wait for all background jobs to complete
 wait
 

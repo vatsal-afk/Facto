@@ -1,215 +1,237 @@
-# Misinformation Detection System
+# Welcome to **Facto**!
 
-A Real-Time Misinformation Detection and Verification System for Broadcast Media built with Next.js, React, and TypeScript.
+**Facto** is a Real-Time Misinformation Detection and Verification System for Broadcast Media. It analyzes news from various sources in real-time, validates its credibility, and provides accurate information to users.
 
-## Prerequisites
+---
 
-Before you begin, ensure you have met the following requirements:
+![App Screenshot](app_screenshots/image1.png)
 
-* You have installed Node.js (v14.0.0 or later)
-* You have installed npm (v6.0.0 or later)
-* You have a basic understanding of React and Next.js
+## Project Setup
 
-## Installation
+### Prerequisites
 
-To install the Misinformation Detection System, follow these steps:
+Ensure that you have the following software installed before setting up the project:
 
-1. Clone the repository:
+- **Node.js** (v14 or later)
+- **npm** (v6 or later)
 
-```git clone [https://github.com/vatsal-afk/TruthTell.git]```
-
-
-2. Navigate to the project directory:
-
-```cd TruthTell```
-
-3. Install the dependencies:
-
-```npm install```
-
-4. Start the server:
-
-you might need to create a virtual env?
-
-```python -m spacy download en_core_web_sm```
-
-```pip install -r requirements.txt```
-
-## Configuration
-
-1. Create a `.env.local` file in the root directory of the project.
-
-2. Add the following environment variables to the `.env.local`.
-
-
-## Running the Project
-
-To run the Misinformation Detection System, follow these steps:
-
-1. Start the development server:
-
-```npm run dev```
-
-2. Open your web browser and navigate to `http://localhost:3000`.
-
-## Additional Notes
+#### Additional Notes
 
 - This project uses shadcn/ui components. If you need to add more components, you can do so using the following command:
 
 ```npx shadcn@latest add [component-name]```
 
-- The smart contract integration for voting is currently a placeholder. You'll need to implement the actual smart contract and update the `voting.tsx` component accordingly.
+### Steps to Set Up the Project
 
-- The live broadcast analysis using WebRTC and ffmpeg is also a placeholder. You'll need to implement the actual integration in the `live-broadcast-analysis.tsx` component.
+1. **Clone the repository**:
+```bash
+   git clone https://github.com/your-username/facto.git
+   ```
+2.  **Set up the Backend**:
+Navigate to the `@/streaming` :
+```bash
+   chmod +x run_backend.sh
+   ./run_backend.sh
+   ``` 
+3.  **Set up the Frontend**:
+Navigate to the `@/frontend` directory:
+```bash
+   npm install
+   npm run dev
+   ``` 
+       
+## Configuration
 
-- Make sure to update the `AuthProvider` in `components/auth-provider.tsx` with your chosen authentication method.
+To configure the project, create a `.env` file in the root directory with
+
+`NEXT_PUBLIC_GUARDIAN_API_KEY=your_guardian_api_key
+NEXT_PUBLIC_YOUTUBE_API_KEY=your_youtube_api_key
+NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS=your_contract_address
+NEXT_PUBLIC_GOOGLE_API_KEY=your_google_api_key
+NEXT_PUBLIC_NEWS_API_KEY=your_news_api_key
+MONGODB_URI=your_mongodb_connection_uri
+NEXTAUTH_SECRET=your_nextauth_secret
+NEXTAUTH_URL=http://localhost:3000
+NEXT_PUBLIC_GOOGLE_CUSTOM_SEARCH_ENGINE_ID=your_custom_search_engine_id
+REDDIT_CLIENT_ID=your_reddit_client_id
+REDDIT_CLIENT_SECRET=your_reddit_api_secret`
 
 # Features
-1. [Custom News Input for checking](#1-fake-news-verification-model)
-2. [Graphical analysis of custom news](#graphical-output)
-3. [Youtube news verification system](#2-live-news-verfication-from-youtube)
-4. [Voting page for verified users](#how-to-become-a-verified-user)
-5. [Discussion page for general users](https://github.com/MaSsKmAn/TruthTell/edit/main/README.md#how-to-join-the-discussion-)
-6. [Social media display and Trending news display](#webscrapping-the-recent-news)
+1.  [Custom News Input for Verification](#1-fake-news-verification-model)
+2.  [Graphical Analysis of Custom News](#graphical-output)
+3.  [YouTube News Verification System](#2-live-news-verification-from-youtube)
+4.  [Voting for Verified Users](#how-to-become-a-verified-user)
+5.  [Discussion Forum for General Users](#how-to-join-the-discussion)
+6.  [Trending News and Social Media Insights](#webscraping-the-recent-news)
 
-## How to become a verified user?
-To enhance the instructiveness and credibility of the website, users can become **verified users** based on their discussions and posts, particularly for well-known professionals or individuals contributing positively to the platform.
+## How to Become a Verified User?
 
-#### Steps to Become a Verified User:
+To improve the reliability and credibility of the platform, users can become **verified** based on their contributions, such as sharing news insights or engaging in discussions. This feature is designed for professionals or individuals who actively contribute to the platform’s goals.
 
-1. **Sign Up**:  
-   - Go to the **Auth Page** of the app.
-   - Sign up as a **generalist** (a regular user).
-   
-2. **Submit Documentation**:  
-   - Provide the required documentation to verify your identity and professional background.
-   - This may include details about your contributions to specific news topics or professional credentials.
+### Steps to Become Verified:
 
-3. **Verification Process**:  
-   - The **verification team** will review your submission within a few days.
-   - Once verified, you will receive access to vote on news topics and contribute to the mission.
+1.  **Sign Up**:
+    
+    -   Visit the **Auth Page** and sign up as a **general user**.
+2.  **Submit Credentials**:
+    
+    -   Provide documentation that confirms your professional background or contributions to specific news topics.
+3.  **Verification Review**:
+    
+    -   The verification team will assess your submission and confirm your status within a few days.
+4.  **Voting Access**:
+    
+    -   After verification, you'll gain the ability to vote on news accuracy and contribute to the model’s evaluation.
 
-4. **Voting Access**:  
-   - Once you are verified, you can vote on news topics to help classify them as either **real** or **fake**. Your contributions will directly influence the accuracy of the news verification model.
+#### Benefits of Verification:
 
-#### Benefits of Verified Users:
-- **Enhanced Contribution**: Verified users can participate in voting and help assess the credibility of news content.
-- **Professional Recognition**: Verified users are recognized for their contributions, making the platform more credible and trustworthy.
-- **Contribute to the Mission**: As a verified user, you help further the goal of promoting truthfulness and accuracy in news dissemination.
-Join the Discussion
+-   **Contribute Meaningfully**: Verified users can vote to determine whether news is real or fake.
+-   **Build Credibility**: Verified status enhances your recognition as a trustworthy participant.
+-   **Support Accuracy**: Your verified status helps improve the quality of news verification.
 
-## How to join the discussion ?:
+----------
 
-### Steps to Participate in the Discussion:
+## How to Join the Discussion?
 
-1. **Go to the Discussion Page**:
-   - Navigate to the **Discussion Page** within the app where all the ongoing discussions are displayed.
+### Steps to Participate:
 
-2. **Add Your Comments**:
-   - Once you're on the discussion page, you can **write your comments** or opinions about the news topic being discussed.
-   - Feel free to share your views, ask questions, or engage with others in the community.
-
-3. **Submit Your Comment**:
-   - After writing your comment, simply click on the **Submit Button** to post your response.
-   - Your comment will be added to the thread of the discussion along with others' comments.
-
-4. **View the Content**:
-   - All content, including your own comments and those of other users, will be displayed in the discussion thread.
-   - For now, the content is **stored in the local database** to ensure quick access to the discussions.
+1.  **Navigate to the Discussion Page**:
+    
+    -   Go to the **Discussion Page** within the app to see ongoing conversations.
+2.  **Share Your Thoughts**:
+    
+    -   Add comments, ask questions, or engage with others about the news topics being discussed.
+3.  **Submit Your Comment**:
+    
+    -   After writing your comment, click **Submit** to post it in the discussion.
+4.  **View All Comments**:
+    
+    -   All comments, including yours, will be visible in the discussion thread.
 
 ### How It Works:
 
-- **Local Storage**:  
-  The content posted in discussions is stored temporarily in the local database. This allows users to view all the discussions and participate in real-time.
+-   **Local Storage**: Discussions are temporarily stored locally for fast access and real-time updates.
+    
+-   **Interactive Thread**: Comments are added dynamically to the discussion thread as users post them.
+    
 
-- **Discussion Thread**:  
-  Once submitted, your content will appear along with other users' contributions. The discussion thread will be updated dynamically as more comments are added.
+### Benefits of Joining:
 
-### Benefits of Participating:
+-   **Engage with the Community**: Share opinions and interact with others to shape the platform.
+-   **Dynamic Conversations**: Real-time commenting fosters active participation.
+-   **Help Shape the Mission**: Your voice supports the goal of reducing misinformation.
 
-- **Engage with Others**:  
-  Join in the discussions and share your thoughts on various news topics.
-  
-- **Enhance the Community**:  
-  Your participation helps foster a community of informed and engaged users contributing to the mission of news verification.
+----------
 
-- **Real-Time Interaction**:  
-  All submitted content is displayed in real-time, allowing for an interactive and dynamic discussion environment.
+### Voting feature:
 
-### Webscrapping the recent news
+![App Screenshot](app_screenshots/image.png)
 
-This analysis focuses on extracting the most recent 50 trending news articles from The Guardian and News API, along with popular posts from Reddit. The project leverages Python's Beautiful Soup library for parsing HTML and XML, Requests for handling HTTP requests, and the praw library for accessing Reddit's API. Additionally, News API integration is utilized for structured and real-time news retrieval. The scraped data is processed and stored efficiently for analysis and insights. This approach enables the collection of diverse and up-to-date content from reliable news sources and social media platforms.
+screenshots of the voting page:
 
+![App Screenshot](app_screenshots/image3.png)
+![App Screenshot](app_screenshots/image2.png)
 
-# About the models
+## Web Scraping for Recent News
+
+![App Screenshot](app_screenshots/image4.png)
+
+This feature collects and analyzes the latest news articles from reliable sources like The Guardian, Reddit, and News API. Using libraries like **BeautifulSoup** for HTML parsing, **Requests** for HTTP requests, and **praw** for accessing Reddit’s API, the platform retrieves diverse and up-to-date content. The data is then processed for analysis and insights, ensuring relevant news is always available for verification.
+
+----------
+
+# About the Models
 
 ## 1. Fake News Verification Model
-This model is designed to accurately verify news claims by utilizing advanced natural language processing (NLP) techniques and embeddings comparison. The core functionality of the model revolves around extracting embeddings from custom news inputs and performing a graph-based search across existing news sources to evaluate similarity. The model ensures comprehensive and precise validation by incorporating multiple decision parameters to detect fake news. 
 
-### Key Features
+This model verifies the authenticity of news by comparing custom inputs to trusted sources. It uses advanced **natural language processing (NLP)** and **embedding-based similarity** checks to assess the credibility of news claims.
 
-- **Embedding-Based Similarity Check**:  
-  The model generates embeddings of custom news inputs and compares them with embeddings from external news sources. The comparison is based on the distance between these embeddings, which reflects the similarity between the two. This similarity score plays a crucial role in determining the accuracy of the news claim.
+### Key Features:
 
-- **Fact Density**:  
-  Measures the information content per sentence. Fake news often lacks factual depth, focusing more on sensationalism than on providing substantial, evidence-backed details. This parameter helps to detect such shallow content.
+-   **Embedding-Based Comparison**: Compares news input embeddings with external sources to check for similarities.
+-   **Fact Density**: Measures the factual depth of news to detect sensationalism.
+-   **Lexical Diversity**: Assesses vocabulary richness to flag repetitive or overly simplified language.
+-   **Sentiment Analysis**: Evaluates emotional bias in the content, aiming for neutrality.
+-   **Readability**: Ensures content is clear and not oversimplified.
 
-- **Lexical Diversity**:  
-  Evaluates the vocabulary richness of the news content. Fake news typically uses repetitive or simplified language to mislead readers. By measuring the lexical diversity, the model detects the richness of vocabulary and flags overly simplistic or repetitive language patterns.
+### How It Works:
 
-- **Sentiment Score**:  
-  Evaluates the neutrality of the news content. Fake news often exaggerates negative emotions to trigger a stronger emotional response. The sentiment score helps remove such biases by ensuring that the content maintains a neutral tone.
+1.  **Input News**: Custom news input is provided.
+2.  **Embedding Extraction**: The input is transformed into embeddings.
+3.  **Similarity Check**: The model compares the embeddings to trusted sources.
+4.  **Refinement**: Additional parameters (fact density, sentiment, etc.) refine the decision.
+5.  **Output**: The model returns a **credibility score** and a **verdict** (real or fake).
 
-- **Readability**:  
-  Measures the ease of comprehension of the content. Fake news often targets a broad audience, using simpler language to ensure maximum reach. This parameter ensures the content is easy to understand but not oversimplified for manipulation.
+### Visual Output:
 
-### Decision Parameters
+-   Bar charts and interactive symbols display scores for each parameter, providing a clear visual summary of the news verification process.
 
-The primary decision parameter is the **similarity score** based on the distance between embeddings. This score indicates how similar the input news is to existing content on trusted news sources. The other parameters—fact density, lexical diversity, sentiment score, and readability—serve to refine the accuracy of the verification process. However, the **embedding similarity** carries the highest weight in the calculation of the final score, ensuring that the most significant factor in determining news accuracy is how closely it aligns with verified information.
+----------
 
-### How It Works
+## 2. Live News Verification from YouTube
 
-1. **Input**: A custom news statement is fed into the model.
-2. **Embedding Extraction**: The model extracts the embedding of the input news.
-3. **Graph-Based Search**: The model performs a graph-based search using the embeddings to find similar news content from external sources.
-4. **Similarity Calculation**: The distance between the embeddings of the input news and the external content is calculated. A lower distance indicates higher similarity.
-5. **Additional Parameters**: Fact density, lexical diversity, sentiment score, and readability are calculated and used to refine the final decision.
-6. **Output**: The model returns a similarity score, verdict (True, False, or somewhere in between), and additional insights into the content quality.
-### Graphical output 
+This model verifies news from YouTube videos using a multi-step process that extracts audio, transcribes it, and analyzes the content for authenticity. It relies on advanced **audio-to-text transcription** and **NLP-based chunking** to evaluate the news in smaller, context-specific pieces.
 
-For making the output more enhanced we have inserted graphs in them to give a visual refrence to what we are seeing and for this we have used bar charts for all the scores, iteractive signs for positive and negative sentiment and Verdict displayed in a playful manner.
+![App Screenshot](app_screenshots/image5.png)
 
-## 2. Live News Verfication from YouTube
+### Key Features:
 
-This model is a multi-step process for verifying news claims derived from video content. The process starts by converting the video to an audio file, then transcribing it using Whisper. After the transcription, the audio is broken down into news chunks, which are processed with NLP techniques. These chunks are then evaluated for authenticity by a deep learning model that classifies them as either real or fake. Additionally, the system includes an option to specify the timestamp from which to start the recording.
+-   **Audio Extraction**: Uses `youtube-dlp` to convert video content into audio.
+-   **Whisper for Transcription**: Transcribes the audio into text using the Whisper model.
+-   **News Chunking**: Breaks transcribed text into meaningful chunks for easier analysis.
+-   **Fake News Classification**: Classifies news as real or fake based on similarity to trusted sources.
+-   **Timestamp Flexibility**: Allows users to select a starting timestamp for targeted analysis.
 
-### Key Features
+### How It Works:
 
-- **Video to Audio Conversion**:  
-  The model uses the `youtube-dlp` library to extract audio from video content, making it easy to work with video-based news sources.
+1.  **Input Video**: Upload the YouTube video to be analyzed.
+2.  **Audio Conversion**: Extracts audio using `youtube-dlp`.
+3.  **Audio Transcription**: Transcribes the audio to text using Whisper.
+4.  **Content Chunking**: Breaks the transcription into chunks for detailed analysis.
+5.  **Verification**: Each chunk is analyzed for authenticity and classified accordingly.
+6.  **Timestamp Selection**: Users can specify where to start analyzing the video.
 
-- **Audio Transcription with Whisper**:  
-  The extracted audio file is passed through the Whisper model to transcribe the audio into text.
+## Flow of the project
 
-- **News Chunk Extraction**:  
-  Once transcribed, the text is divided into chunks using a Transformer model and NLP-based word extraction. This allows the model to handle smaller, contextually relevant pieces of information for better analysis.
+Here is a detailed flowchart showing various routes:
+```mermaid
+sequenceDiagram
+    participant User
+    participant Dashboard
+    participant Auth
+    participant TrendAnalysis
+    participant Counter
+    participant LiveBroadcast
+    participant Transcribe
+    participant Process
+    participant CustomNews
+    participant GraphAnalysis
+    participant Bills
+    participant UN
+    participant SocialMedia
 
-- **Fake News Classification**:  
-  The chunks are sent to the main model for classification as real or fake news. The decision is based on several factors such as fact density, lexical diversity, sentiment score, readability, and most importantly, similarity to existing trusted news content.
+    User->>Dashboard: Access Tailor-made Dashboard
+    Dashboard->>Auth: User Login (Journalist/General)
+    Auth->>Dashboard: Return Authenticated User
+    
+    Dashboard->>TrendAnalysis: Analyze Recent News Articles
+    TrendAnalysis->>Counter: Vote on Articles
+    
+    Dashboard->>LiveBroadcast: Analyze Live YouTube Broadcast
+    LiveBroadcast->>Transcribe: Use yt-dlp & FFmpeg for Audio Extraction
+    Transcribe->>Process: Summarize Transcription
+    
+    Dashboard->>CustomNews: Input Custom News Data
+    CustomNews->>GraphAnalysis: Analyze Custom News
 
-- **Timestamp Selection**:  
-  The model provides an option to choose the starting timestamp for the recording. This allows for focused analysis on specific sections of a video.
+    Dashboard->>Bills: Get Recent Parliamentary Bills
+    Dashboard->>UN: Get Latest UN Convention Updates
+    Dashboard->>SocialMedia: Analyze Social Media Links
 
-### How It Works
-
-1. **Video Input**: drag and drop the selcted youtube video sample in the placeholder and then click connect to backend.
-2. **Audio Extraction**: The video is processed with `youtube-dlp` to extract the audio.
-3. **Audio Transcription**: The extracted audio is passed to the Whisper model for transcription.
-4. **Chunk Extraction**: The transcribed text is broken down into meaningful chunks using a Transformer model and NLP techniques.
-5. **Fake News Detection**: Each chunk is sent to the main model, which compares it against known news sources to classify it as either real or fake.
-6. **Timestamp Selection**: Users can select a specific timestamp to start the recording, allowing for tailored news analysis.
-
-
-## Contributing
-
-If you want to contribute to this project, please fork the repository and create a pull request, or open an issue for discussion.
+    Note right of TrendAnalysis: Trend analysis helps in identifying fake news
+    Note right of Counter: Voting allows users to reduce misinformation
+    Note right of LiveBroadcast: Extracting and transcribing YouTube live videos
+    Note right of GraphAnalysis: Web scraping and graph-based news analysis
+```
+### Thank You!
+Developed by Vatsal, Vishesh, Tanmay and Aman 🚀

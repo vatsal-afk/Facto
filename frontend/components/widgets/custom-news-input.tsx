@@ -17,7 +17,7 @@ export default function DashboardCard() {
     console.log('Sending to server:', requestBody)
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/verify_news', {
+      const response = await fetch('http://127.0.0.1:8000/verify_news', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -78,11 +78,11 @@ export default function DashboardCard() {
           <Button type="submit" className="mx-auto block">Submit a Link</Button>
         </form>
 
-        <h2 className="text-xl font-semibold bg-gray-200 p-4 rounded-md">Got a File? no worries.</h2>
+        {/* <h2 className="text-xl font-semibold bg-gray-200 p-4 rounded-md">Got a File? no worries.</h2>
         <form onSubmit={handleFileSubmit} className="space-y-4">
           <Input type="file" name="file" />
           <Button type="submit" className="mx-auto block">Submit File</Button>
-        </form>
+        </form> */}
       </CardContent>
     </Card>
   )
