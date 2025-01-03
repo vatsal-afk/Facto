@@ -33,7 +33,7 @@ const menuItems = [
   { icon: TrendingUp, label: "Trend Analysis", href: "/trend-analysis" },
   { icon: Radio, label: "Live Broadcast", href: "/live-broadcast" },
   { icon: BarChart2, label: "Social Media Analysis", href: "/social-media-analysis" },
-  { icon: Vote, label: "Vote", href: "/counter" },
+  // { icon: Vote, label: "Vote", href: "/counter" },
   { icon: Globe, label: "United Nations", href: "/un" },
   { icon: Gavel, label: "Legislative Bills", href: "/bills" },
   { icon: MessageSquare, label: "Discussions", href: "/discussions" },

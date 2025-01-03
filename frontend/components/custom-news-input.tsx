@@ -39,15 +39,39 @@ export default function CustomNewsInput() {
     }
   }
 
-  const handleLinkSubmit = (e: React.FormEvent) => {
+  const handleLinkSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     console.log('Submitting link:', { link })
-  }
+    const requestBody = { url: link }
 
-  const handleFileSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('Submitting file')
+    try{
+      const response=await fetch("http://127.0.0.1:8000/scrape",{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      })
+      const result = await response.json()
+      console.log('Received from server:', result)
+
+      const queryParams = new URLSearchParams({
+        data: JSON.stringify(result),
+      }).toString()
+
+      //console.log('Navigating to:', /graph-analysis?${queryParams})
+      window.location.href = `/graph-analysis?${queryParams}`
+
+    }catch(error){
+      console.error('Error:', error)
+    }
   }
+  
+
+  // const handleFileSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault()
+  //   console.log('Submitting file')
+  // }
 
   return (
     <div className="space-y-6">

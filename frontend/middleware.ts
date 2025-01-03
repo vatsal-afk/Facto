@@ -9,7 +9,10 @@ const publicRoutes = [
   '/api/auth',
   '/_next',
   '/favicon.ico',
-  '/images'  // if you have a public images directory
+  '/images',
+  '/api/userExists',
+  '/api/register'
+    // if you have a public images directory
 ];
 
 export default withAuth(

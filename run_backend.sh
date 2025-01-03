@@ -20,10 +20,10 @@ python3 graph-analysis.py &
 echo "Running reddit-posts.py..."
 python3 reddit-posts.py &
 
-cd "$(dirname "$0")/streaming"
+# echo "Running article-link.py..."
+# python3 article-link.py &
 
-echo "Running server.js..."
-node server.js &
+cd "../streaming"
 
 echo "Running app.py..."
 python3 app.py &
