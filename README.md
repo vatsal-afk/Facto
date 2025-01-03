@@ -4,7 +4,7 @@
 
 ---
 
-![App Screenshot](app_screenshots/image1.png)
+![App Screenshot](app_screenshots/Dashboard.png)
 
 ## Project Setup
 
@@ -166,7 +166,7 @@ This model verifies the authenticity of news by comparing custom inputs to trust
 
 This repository contains a **Live News Verification Model** that processes YouTube videos to verify the authenticity of news. The model extracts audio, transcribes it, and analyzes the content in smaller, meaningful chunks to ensure accurate evaluation.
 
-![App Screenshot](app_screenshots/image5.png)
+![App Screenshot](app_screenshots/LIve_broadcast.png)
 
 ---
 
