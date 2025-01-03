@@ -3,12 +3,16 @@ from flask_cors import CORS
 import praw
 import logging
 from pytrends.request import TrendReq
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
 CORS(app)
 
-REDDIT_CLIENT_ID = "Vc0zoTH0IV6ErgqHpGtY5A"
-REDDIT_CLIENT_SECRET = "q8dCCrrMcMkYiwsm4aQ0WrG9-xM6aA"
+load_dotenv()
+
+REDDIT_CLIENT_ID = os.getenv("REDDIT_CLIENT_ID")
+REDDIT_CLIENT_SECRET = os.getenv("REDDIT_CLIENT_SECRET")
 
 # Initialize Reddit client
 reddit = praw.Reddit(

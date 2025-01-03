@@ -34,3 +34,4 @@ torch                # PyTorch for deep learning and neural networks
 
 pytrends
 praw
+python-dotenv
