@@ -60,7 +60,7 @@ REDDIT_CLIENT_SECRET=your_reddit_api_secret`
 1.  [Custom News Input for Verification](#1-fake-news-verification-model)
 2.  [Graphical Analysis of Custom News](#graphical-output)
 3.  [YouTube News Verification System](#2-live-news-verification-from-youtube)
-4.  [Voting for Verified Users](#how-to-become-a-verified-user)
+4.  [Blockchain-Based Voting for Verified Users](#how-to-become-a-verified-user)
 5.  [Discussion Forum for General Users](#how-to-join-the-discussion)
 6.  [Trending News and Social Media Insights](#webscraping-the-recent-news)
 
@@ -262,4 +262,4 @@ sequenceDiagram
     Note right of GraphAnalysis: Web scraping and graph-based news analysis
 ```
 ### Thank You!
-Developed by Vatsal, Vishesh, Tanmay and Aman 🚀
+Developed by Cybr_Rakshak 🚀
