@@ -1,17 +1,39 @@
 // components/ContactUs.tsx
 import React, { useState } from "react";
+import emailjs from "emailjs-com";
 
 const ContactUs: React.FC = () => {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [message, setMessage] = useState<string>("");
+  const [status, setStatus] = useState<string>("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Here you would typically send the form data to a backend
-    console.log("Message submitted:", { name, email, message });
-    alert("Message sent successfully!");
+    const templateParams = {
+      from_name: name,
+      from_email: email,
+      message: message,
+    };
+
+    emailjs
+      .send(
+        "service_mminu19", // EmailJS service ID
+        "template_e3i8bvf", // EmailJS template ID
+        templateParams,
+        "hGi-_GY4XU7EbgXUq" // Your EmailJS user ID
+      )
+      .then(
+        (response) => {
+          console.log("Message sent:", response);
+          setStatus("Message sent successfully!");
+        },
+        (error) => {
+          console.log("Error sending message:", error);
+          setStatus("Failed to send message.");
+        }
+      );
   };
 
   return (
@@ -67,6 +89,8 @@ const ContactUs: React.FC = () => {
             Send Message
           </button>
         </form>
+
+        {status && <p className="mt-4 text-center text-green-600">{status}</p>}
       </div>
     </div>
   );

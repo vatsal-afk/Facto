@@ -20,10 +20,10 @@ python3 graph-analysis.py &
 echo "Running reddit-posts.py..."
 python3 reddit-posts.py &
 
-# echo "Running article-link.py..."
-# python3 article-link.py &
-
 cd "../streaming"
+
+echo "Running server.js..."
+node server.js &
 
 echo "Running app.py..."
 python3 app.py &
