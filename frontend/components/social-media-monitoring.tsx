@@ -34,7 +34,7 @@ export default function SocialMediaAnalysis() {
   useEffect(() => {
     const fetchTrendingAndRedditPosts = async () => {
       try {
-        const response = await fetch('http://localhost:8080/trending-topics-by-reddit');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/social/trending-topics-by-reddit`);
         if (!response.ok) {
           throw new Error('Failed to fetch data from the server');
         }
@@ -58,7 +58,7 @@ export default function SocialMediaAnalysis() {
 
       console.log('Analyzing URL:', url);
 
-      const response = await fetch('http://localhost:8000/verify_news', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/social/verify_news`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

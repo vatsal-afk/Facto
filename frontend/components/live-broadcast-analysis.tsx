@@ -38,7 +38,7 @@ interface LiveNewsProps {
 const LiveNews: React.FC<LiveNewsProps> = ({ setLiveNewsStreams }) => {
   useEffect(() => {
     const fetchLiveNews = async () => {
-      const YouTube_API_Key = "AIzaSyCXZVLg48y855cUljUqco5OIwpqOy2W_hA"
+      const YouTube_API_Key = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
       if (!YouTube_API_Key) {
         console.error("YouTube API key is not configured")
         return
@@ -88,7 +88,7 @@ export default function LiveBroadcastAnalysis() {
     setError(null)
 
     try {
-      const summaryRes = await fetch('http://localhost:5500/process')
+      const summaryRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/transcribe/process`)
       if (!summaryRes.ok) {
         throw new Error(`Failed to generate summary: ${summaryRes.statusText}`)
       }
@@ -157,7 +157,7 @@ export default function LiveBroadcastAnalysis() {
     try {
       console.log("Sending video URL to backend:", draggedVideo.url)
   
-      const response = await fetch("http://localhost:5001/transcribe", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}transcribe//transcribe`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -187,7 +187,7 @@ export default function LiveBroadcastAnalysis() {
     }
     try {
       console.log("Sending video URL to backend:", draggedVideo.url)
-      const response = await fetch("http://localhost:5001/transcribe", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/transcribe/transcribe`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

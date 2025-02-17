@@ -17,5 +17,5 @@ requests
 gunicorn
 tokenizers
 torch
-faiss-cpu (or faiss-gpu)
+faiss-cpu
 numpy
