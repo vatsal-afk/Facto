@@ -1,0 +1,16 @@
+Flask
+Flask-Cors
+praw
+pytrends
+python-dotenv
+feedparser
+beautifulsoup4
+selenium
+webdriver-manager
+requests
+transformers
+sentence-transformers
+spacy
+networkx
+matplotlib
+textstat

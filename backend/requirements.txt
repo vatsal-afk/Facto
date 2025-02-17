@@ -1,16 +1,14 @@
-Flask
-Flask-Cors
-praw
-pytrends
-python-dotenv
-feedparser
-beautifulsoup4
-selenium
-webdriver-manager
-requests
-transformers
-sentence-transformers
-spacy
-networkx
-matplotlib
-textstat
+from flask import Flask
+from routes.bills import bills_bp
+from routes.knowledge-graphs import user_bp
+from routes.auth import auth_bp
+
+app = Flask(__name__)
+
+# Register Blueprints
+app.register_blueprint(analysis_bp, url_prefix="/analysis")
+app.register_blueprint(user_bp, url_prefix="/user")
+app.register_blueprint(auth_bp, url_prefix="/auth")
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)
