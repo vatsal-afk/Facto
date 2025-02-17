@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, url_for
+from flask import Blueprint, request, jsonify, url_for, current_app
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 from sentence_transformers import SentenceTransformer, util
 import spacy
@@ -28,8 +28,6 @@ nlp = spacy.load("en_core_web_sm")
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 article_store = []
-
-app.config['KNOWLEDGE_GRAPH_DIR'] = 'static/knowledge_graphs'
 
 def clean_text(text):
     text = re.sub(r'<.*?>', '', text)
@@ -73,11 +71,12 @@ def create_knowledge_graph(summary):
     nx.draw(graph, pos, with_labels=True, node_size=3000, node_color="lightblue", font_size=10, font_weight="bold")
     plt.title("Knowledge Graph - Noun Nodes Only")
 
-    if not os.path.exists(app.config['KNOWLEDGE_GRAPH_DIR']):
-        os.makedirs(app.config['KNOWLEDGE_GRAPH_DIR'])
+    knowledge_graph_dir = current_app.config['KNOWLEDGE_GRAPH_DIR']
+    if not os.path.exists(knowledge_graph_dir):
+        os.makedirs(knowledge_graph_dir)
 
     filename = f"knowledge_graph_{int(time.time())}.png"
-    filepath = os.path.join(app.config['KNOWLEDGE_GRAPH_DIR'], filename)
+    filepath = os.path.join(knowledge_graph_dir, filename)
     plt.savefig(filepath, format="PNG")
     plt.close()
 
@@ -159,7 +158,6 @@ def get_verdict(similarity_score):
     else:
         return "Likely Fake News"
 
-
 @graphs_bp.route('/verify_news', methods=['POST'])
 def verify_news():
     try:
@@ -233,3 +231,15 @@ def scrape():
             return jsonify({"error": f"Failed to scrape and push: {e}"}), 500
     else:
         return jsonify({"error": news_analysis}), 500
+
+def scrape_data(url):
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+        title = soup.title.string if soup.title else ""
+        paragraphs = soup.find_all('p')
+        first_paragraph = paragraphs[0].text if paragraphs else ""
+        return title, "Success", first_paragraph
+    except Exception as e:
+        return None, f"Error scraping data: {str(e)}", None
