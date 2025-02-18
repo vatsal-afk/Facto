@@ -19,50 +19,47 @@ Ensure that you have the following software installed before setting up the proj
 
 - This project uses shadcn/ui components. If you need to add more components, you can do so using the following command:
 
-```npx shadcn@latest add [component-name]```
+``npx shadcn@latest add [component-name]``
 
 ### Steps to Set Up the Project
 
 1. **Clone the repository**:
+
 ```bash
-   git clone https://github.com/your-username/facto.git
-   ```
-2.  **Set up the Backend**:
-Navigate to the `@/streaming` :
+   git clone https://github.com/vatsal-afk/facto.git
+```
+
+2. **Set up the Backend**:
+   Navigate to the `@/streaming` :
+
 ```bash
-   chmod +x run_backend.sh
-   ./run_backend.sh
-   ``` 
-3.  **Set up the Frontend**:
-Navigate to the `@/frontend` directory:
+   cd backend
+   pip install -r requirements.txt
+   gunicorn -w 4 -b 0.0.0.0:8000 app:app
+```
+
+3. **Set up the Frontend**:
+   Navigate to the `@/frontend` directory:
+
 ```bash
    npm install
    npm run dev
-   ``` 
-       
+```
+
 ## Configuration
 
 To configure the project, create a `.env` file in the root directory with
 
-`NEXT_PUBLIC_GUARDIAN_API_KEY=your_guardian_api_key
-NEXT_PUBLIC_YOUTUBE_API_KEY=your_youtube_api_key
-NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS=your_contract_address
-NEXT_PUBLIC_GOOGLE_API_KEY=your_google_api_key
-NEXT_PUBLIC_NEWS_API_KEY=your_news_api_key
-MONGODB_URI=your_mongodb_connection_uri
-NEXTAUTH_SECRET=your_nextauth_secret
-NEXTAUTH_URL=http://localhost:3000
-NEXT_PUBLIC_GOOGLE_CUSTOM_SEARCH_ENGINE_ID=your_custom_search_engine_id
-REDDIT_CLIENT_ID=your_reddit_client_id
-REDDIT_CLIENT_SECRET=your_reddit_api_secret`
+`NEXT_PUBLIC_GUARDIAN_API_KEY=your_guardian_api_key NEXT_PUBLIC_YOUTUBE_API_KEY=your_youtube_api_key NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS=your_contract_address NEXT_PUBLIC_GOOGLE_API_KEY=your_google_api_key NEXT_PUBLIC_NEWS_API_KEY=your_news_api_key MONGODB_URI=your_mongodb_connection_uri NEXTAUTH_SECRET=your_nextauth_secret NEXTAUTH_URL=http://localhost:3000 NEXT_PUBLIC_GOOGLE_CUSTOM_SEARCH_ENGINE_ID=your_custom_search_engine_id REDDIT_CLIENT_ID=your_reddit_client_id REDDIT_CLIENT_SECRET=your_reddit_api_secret`
 
 # Features
-1.  [Custom News Input for Verification](#1-fake-news-verification-model)
-2.  [Graphical Analysis of Custom News](#graphical-output)
-3.  [YouTube News Verification System](#2-live-news-verification-from-youtube)
-4.  [Voting for Verified Users](#how-to-become-a-verified-user)
-5.  [Discussion Forum for General Users](#how-to-join-the-discussion)
-6.  [Trending News and Social Media Insights](#webscraping-the-recent-news)
+
+1. [Custom News Input for Verification](#1-fake-news-verification-model)
+2. [Graphical Analysis of Custom News](#graphical-output)
+3. [YouTube News Verification System](#2-live-news-verification-from-youtube)
+4. [Voting for Verified Users](#how-to-become-a-verified-user)
+5. [Discussion Forum for General Users](#how-to-join-the-discussion)
+6. [Trending News and Social Media Insights](#webscraping-the-recent-news)
 
 ## How to Become a Verified User?
 
@@ -76,16 +73,10 @@ To improve the reliability and credibility of the platform, users can become ver
 
 ### Steps to Become Verified 🔑
 
-1. **Sign Up** 📝:  
-   Visit the **Auth Page** and sign up as a general user.
-
-2. **Submit Credentials** 📄:  
-   Provide documentation that confirms your professional background or contributions to specific news topics.
-
-3. **Verification Review** 🔍:  
-   The verification team will assess your submission and confirm your status within a few days.
-
-4. **Voting Access** 🗳️:  
+1. **Sign Up** 📝:Visit the **Auth Page** and sign up as a general user.
+2. **Submit Credentials** 📄:Provide documentation that confirms your professional background or contributions to specific news topics.
+3. **Verification Review** 🔍:The verification team will assess your submission and confirm your status within a few days.
+4. **Voting Access** 🗳️:
    After verification, you'll gain the ability to vote on news accuracy and contribute to the model’s evaluation.
 
 ---
@@ -93,11 +84,10 @@ To improve the reliability and credibility of the platform, users can become ver
 ### Benefits of Verification 🌟
 
 - **Contribute Meaningfully** 🌐: Verified users can vote to determine whether news is real or fake.
-  
 - **Build Credibility** 🏆: Verified status enhances your recognition as a trustworthy participant.
-
 - **Support Accuracy** 📊: Your verified status helps improve the quality of news verification.
-----------
+
+---
 
 ### Voting feature:
 
@@ -121,7 +111,7 @@ Just click on the upvote and downvote option to express your required sentiments
 
 This feature collects and analyzes the latest news articles from reliable sources like The Guardian, Reddit, and News API. Using libraries like **BeautifulSoup** for HTML parsing, **Requests** for HTTP requests, and **praw** for accessing Reddit’s API, the platform retrieves diverse and up-to-date content. The data is then processed for analysis and insights, ensuring relevant news is always available for verification.
 
-----------
+---
 
 # About the Models
 
@@ -131,37 +121,38 @@ This model verifies the authenticity of news by comparing custom inputs to trust
 
 ### ✨Key Features:
 
--   🔗**Embedding-Based Comparison**: Compares news input embeddings with external sources to check for similarities.
--   📚**Fact Density**: Measures the factual depth of news to detect sensationalism.
--   🔤**Lexical Diversity**: Assesses vocabulary richness to flag repetitive or overly simplified language.
--   😊**Sentiment Analysis**: Evaluates emotional bias in the content, aiming for neutrality.
--   📖**Readability**: Ensures content is clear and not oversimplified.
+- 🔗**Embedding-Based Comparison**: Compares news input embeddings with external sources to check for similarities.
+- 📚**Fact Density**: Measures the factual depth of news to detect sensationalism.
+- 🔤**Lexical Diversity**: Assesses vocabulary richness to flag repetitive or overly simplified language.
+- 😊**Sentiment Analysis**: Evaluates emotional bias in the content, aiming for neutrality.
+- 📖**Readability**: Ensures content is clear and not oversimplified.
 
 ### ⚙️How It Works:
 
-1.  ✍️**Input News**: Custom news input is provided.
-2.  🧠**Embedding Extraction**: The input is transformed into embeddings.
-3.  🔍**Similarity Check**: The model compares the embeddings to trusted sources.
-4.  🔧**Refinement**: Additional parameters (fact density, sentiment, etc.) refine the decision.
-5.  ✅**Output**: The model returns a **credibility score** and a **verdict** (real or fake).
+1. ✍️**Input News**: Custom news input is provided.
+2. 🧠**Embedding Extraction**: The input is transformed into embeddings.
+3. 🔍**Similarity Check**: The model compares the embeddings to trusted sources.
+4. 🔧**Refinement**: Additional parameters (fact density, sentiment, etc.) refine the decision.
+5. ✅**Output**: The model returns a **credibility score** and a **verdict** (real or fake).
 
 ### 📊 Visual Output:
 
--   Bar charts and interactive symbols display scores for each parameter, providing a clear visual summary of the news verification process.
--   Knowledge graph for getting the sense out of the news.
+- Bar charts and interactive symbols display scores for each parameter, providing a clear visual summary of the news verification process.
+- Knowledge graph for getting the sense out of the news.
 
 ---
+
 ## 🛠️ Models Used
 
-| Feature                    | Models/Tools                                  |
-|----------------------------|-----------------------------------------------|
-| **Embedding Comparison**   | [BERT](https://huggingface.co/bert-base-uncased), [RoBERTa](https://huggingface.co/roberta-base), [SBERT](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) |
-| **Fact Density**           | [T5](https://huggingface.co/t5-base), [GPT](https://platform.openai.com/docs/models/gpt-4), Google Knowledge Graph API |
-| **Lexical Diversity**      | [spaCy](https://spacy.io/), [TextBlob](https://textblob.readthedocs.io/en/dev/) |
-| **Sentiment Analysis**     | [VADER Sentiment](https://github.com/cjhutto/vaderSentiment), [BERT-Sentiment](https://huggingface.co/nlptown/bert-base-multilingual-uncased-sentiment) |
-| **Readability Scoring**    | Flesch-Kincaid Readability Tests, Custom Algorithms |
+| Feature                        | Models/Tools                                                                                                                                                    |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Embedding Comparison** | [BERT](https://huggingface.co/bert-base-uncased), [RoBERTa](https://huggingface.co/roberta-base), [SBERT](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) |
+| **Fact Density**         | [T5](https://huggingface.co/t5-base), [GPT](https://platform.openai.com/docs/models/gpt-4), Google Knowledge Graph API                                                |
+| **Lexical Diversity**    | [spaCy](https://spacy.io/), [TextBlob](https://textblob.readthedocs.io/en/dev/)                                                                                       |
+| **Sentiment Analysis**   | [VADER Sentiment](https://github.com/cjhutto/vaderSentiment), [BERT-Sentiment](https://huggingface.co/nlptown/bert-base-multilingual-uncased-sentiment)               |
+| **Readability Scoring**  | Flesch-Kincaid Readability Tests, Custom Algorithms                                                                                                             |
 
-----------
+---
 
 ## 🎥 Live News Verification from YouTube
 
@@ -173,55 +164,47 @@ This repository contains a **Live News Verification Model** that processes YouTu
 
 ### 🚀 Features
 
-- **🎵 Audio Extraction**  
-  Extract audio directly from YouTube videos using `youtube-dlp`.  
-
-- **📄 Whisper for Transcription**  
-  Convert audio to text with high accuracy using the **Whisper model**.  
-
-- **📝 News Chunking**  
-  Break transcribed text into smaller, context-specific chunks for efficient analysis.  
-
-- **❌✅ Fake News Classification**  
-  Analyze and classify news chunks as **real** or **fake** using trusted source comparison.  
-
-- **⏳ Timestamp Flexibility**  
-  Start analyzing from a specific timestamp for focused evaluations.  
+- **🎵 Audio Extraction**Extract audio directly from YouTube videos using `youtube-dlp`.
+- **📄 Whisper for Transcription**Convert audio to text with high accuracy using the **Whisper model**.
+- **📝 News Chunking**Break transcribed text into smaller, context-specific chunks for efficient analysis.
+- **❌✅ Fake News Classification**Analyze and classify news chunks as **real** or **fake** using trusted source comparison.
+- **⏳ Timestamp Flexibility**
+  Start analyzing from a specific timestamp for focused evaluations.
 
 ---
 
 ### 🛠️ Models and Tools Used
 
-| Feature                      | Models/Tools                                   |
-|------------------------------|-----------------------------------------------|
-| **Audio Extraction**         | [youtube-dlp](https://github.com/yt-dlp/yt-dlp) |
-| **Audio Transcription**      | [Whisper](https://github.com/openai/whisper)   |
-| **Embedding Comparison**     | [BERT](https://huggingface.co/bert-base-uncased), [RoBERTa](https://huggingface.co/roberta-base) |
+| Feature                            | Models/Tools                                                                                                           |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **Audio Extraction**         | [youtube-dlp](https://github.com/yt-dlp/yt-dlp)                                                                           |
+| **Audio Transcription**      | [Whisper](https://github.com/openai/whisper)                                                                              |
+| **Embedding Comparison**     | [BERT](https://huggingface.co/bert-base-uncased), [RoBERTa](https://huggingface.co/roberta-base)                             |
 | **Fake News Classification** | [SBERT](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2), [GPT](https://platform.openai.com/docs/models/gpt-4) |
-| **Chunking & Analysis**      | [spaCy](https://spacy.io/), Custom Algorithms |
+| **Chunking & Analysis**      | [spaCy](https://spacy.io/), Custom Algorithms                                                                             |
 
 ---
 
 ### 📋 How It Works
 
-1. **Input Video**: Upload the YouTube video URL to be analyzed.  
-2. **Audio Conversion**: Extract audio from the video using `youtube-dlp`.  
-3. **Audio Transcription**: Transcribe the extracted audio to text using the **Whisper model**.  
-4. **Content Chunking**: Split the transcription into smaller chunks for detailed analysis.  
-5. **Verification**: Compare each chunk with embeddings from trusted sources to classify news as **real** ✅ or **fake** ❌.  
-6. **Timestamp Selection**: Optionally select a starting timestamp for targeted analysis.  
+1. **Input Video**: Upload the YouTube video URL to be analyzed.
+2. **Audio Conversion**: Extract audio from the video using `youtube-dlp`.
+3. **Audio Transcription**: Transcribe the extracted audio to text using the **Whisper model**.
+4. **Content Chunking**: Split the transcription into smaller chunks for detailed analysis.
+5. **Verification**: Compare each chunk with embeddings from trusted sources to classify news as **real** ✅ or **fake** ❌.
+6. **Timestamp Selection**: Optionally select a starting timestamp for targeted analysis.
 
 ---
 
 ### 📊 Visual Outputs
 
-- Detailed classification for each chunk with timestamps.  
-- Bar charts and credibility scores for visual summary.  
-
+- Detailed classification for each chunk with timestamps.
+- Bar charts and credibility scores for visual summary.
 
 ## Flow of the project
 
 Here is a detailed flowchart showing various routes:
+
 ```mermaid
 sequenceDiagram
     participant User
@@ -241,14 +224,14 @@ sequenceDiagram
     User->>Dashboard: Access Tailor-made Dashboard
     Dashboard->>Auth: User Login (Journalist/General)
     Auth->>Dashboard: Return Authenticated User
-    
+  
     Dashboard->>TrendAnalysis: Analyze Recent News Articles
     TrendAnalysis->>Counter: Vote on Articles
-    
+  
     Dashboard->>LiveBroadcast: Analyze Live YouTube Broadcast
     LiveBroadcast->>Transcribe: Use yt-dlp & FFmpeg for Audio Extraction
     Transcribe->>Process: Summarize Transcription
-    
+  
     Dashboard->>CustomNews: Input Custom News Data
     CustomNews->>GraphAnalysis: Analyze Custom News
 
@@ -261,5 +244,7 @@ sequenceDiagram
     Note right of LiveBroadcast: Extracting and transcribing YouTube live videos
     Note right of GraphAnalysis: Web scraping and graph-based news analysis
 ```
+
 ### Thank You!
+
 Developed by Vatsal, Vishesh, Tanmay and Aman 🚀

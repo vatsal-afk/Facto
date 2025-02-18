@@ -7,8 +7,6 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
-/venv
-
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
@@ -44,18 +42,14 @@ build/Release
 node_modules/
 jspm_packages/
 
-./.env
-
-streaming/node_modules
-streaming/segments
-streaming/transcription
-streaming/venv
-streaming/.env
+/venv
 
 backend/env
-backend/venv
-backend/node_modules
+backend/__pycache__
 backend/static/knowledge_graphs
+backend/transcription
+
+backend/routes/__pycache__
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
