@@ -7,8 +7,13 @@ from sentence_transformers import SentenceTransformer, util
 import numpy as np
 import faiss
 import re
+from db_config import MongoDBConnection
+from db_operations import TranscriptionOperations
 
 transcription_bp = Blueprint("transcription", __name__)
+
+db_connection = MongoDBConnection.get_instance()
+transcription_ops = TranscriptionOperations(db_connection)
 
 # Initialize models and tokenizers
 model_name = "gpt2"
@@ -281,19 +286,35 @@ def process_news_list(news_list):
     return results
 
 # Ensure required directory exists
-if not os.path.exists('./transcription'):
-    os.makedirs('./transcription')
-
-@transcription_bp.route('/process', methods=['GET'])
-def process_file():
-    print("Received a request to /process")
-    file_path = os.path.join(current_app.root_path, 'transcription', 'output_audio.txt')
-
-    if not os.path.exists(file_path):
-        return jsonify({"error": "File not found"}), 404
+# if not os.path.exists('./transcription'):
+#     os.makedirs('./transcription')
+transcription_bp.route('/save_transcription', methods=['POST'])
+def save_transcription_route():
+    if not request.is_json:
+        return jsonify({"error": "Content-Type must be application/json"}), 400
+    
+    content = request.json.get('content')
+    if not content:
+        return jsonify({"error": "No content provided"}), 400
 
     try:
-        input_text = read_input_from_file(file_path)
+        document_id = transcription_ops.save_transcription(content)
+        return jsonify({"success": True, "document_id": document_id})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+transcription_bp.route('/process', methods=['GET'])
+def process_file():
+    print("Received a request to /process")
+    # file_path = os.path.join(current_app.root_path, 'transcription', 'output_audio.txt')
+
+    # if not os.path.exists(file_path):
+    #     return jsonify({"error": "File not found"}), 404
+
+    try:
+        input_text = transcription_ops.get_latest_transcription() 
+        if not input_text:
+            return jsonify({"error": "No transcription found"}), 404
         summary = summarize_text(input_text)
         chunks = split_text_into_chunks(summary, max_chunk_length=150)
 

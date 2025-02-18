@@ -13,5 +13,9 @@ app.register_blueprint(graphs_bp, url_prefix="/graph")
 app.register_blueprint(social_bp, url_prefix="/social")
 app.register_blueprint(transcription_bp, url_prefix="/transcribe")
 
+@app.teardown_appcontext
+def cleanup(exception=None):
+    db_connection.close_connection()
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000)
