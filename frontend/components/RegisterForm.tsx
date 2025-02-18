@@ -12,9 +12,9 @@ export default function RegisterForm() {
 
   const router = useRouter();
 
-  const handleSubmit = async (e:any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+  
     if (!role || !email || !password) {
       setError("All fields are necessary.");
       return;
@@ -49,7 +49,7 @@ export default function RegisterForm() {
       }); 
 
       if (res.ok) {
-        const form = e.target;
+        const form = e.target as HTMLFormElement;
         form.reset();
         router.push("/signin");
       } else {

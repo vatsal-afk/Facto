@@ -1,0 +1,97 @@
+The Next.js build failed due to numerous TypeScript and ESLint errors. These errors range from type issues (Unexpected any), unused variables, unescaped entities, to warnings about using <img> instead of <Image /> for optimized images. There are also warnings about missing dependencies in React Hooks.
+
+List of Errors and Warnings:
+
+TypeScript Errors (@typescript-eslint/no-explicit-any):
+
+Multiple instances of "Unexpected any. Specify a different type." in:
+
+app/WalletContext.tsx
+
+components/RegisterForm.tsx
+
+components/legislature.tsx
+
+components/news-analysis/metrics-analysis.tsx
+
+components/widgets/breaking-news-banner.tsx
+
+components/widgets/important-articles.tsx
+
+components/widgets/lok-sabha-bills.tsx
+
+components/widgets/social-media-updates.tsx
+
+components/trend-analysis.tsx
+
+components/un-conventions.tsx
+
+components/widgets/un-conventions.tsx
+
+components/widgets/user-alerts.tsx
+
+ESLint Errors and Warnings:
+
+Unescaped Entities (react/no-unescaped-entities):
+
+" can be escaped in app/about-us/page.tsx and components/LoginForm.tsx, and components/widgets/fake-news-alert.tsx.
+
+Unused Variables (@typescript-eslint/no-unused-vars):
+
+Multiple instances of "'variable' is defined but never used." in various components:
+
+app/api/article/route.tsx
+
+app/api/auth/[...nextauth]/route.tsx
+
+app/graph-analysis/page.tsx
+
+app/layout.tsx
+
+components/discussion-page.tsx
+
+components/news-analysis/knowledge-graph.tsx
+
+components/news-analysis/news-header.tsx
+
+components/news-analysis/readability-gauge.tsx
+
+components/news-analysis/readability-score.tsx
+
+components/news-analysis/sentiment-analysis.tsx
+
+components/news-analysis/sentiment-meter.tsx
+
+components/news-analysis/sentiment-plot.tsx
+
+components/news-item.tsx
+
+components/notifications.tsx
+
+components/sidebar.tsx
+
+components/social-media-monitoring.tsx
+
+components/trend-analysis.tsx
+
+components/widgets/custom-news-input.tsx
+
+Missing Dependencies in React Hooks (react-hooks/exhaustive-deps):
+
+React Hook useEffect has a missing dependency in app/WalletContext.tsx and components/counter.tsx.
+
+<img> Usage (@next/next/no-img-element):
+
+Multiple warnings about using <img> instead of <Image /> in:
+
+app/about-us/page.tsx
+
+app/page.tsx
+
+components/live-broadcast-analysis.tsx
+
+components/news-analysis/knowledge-graph.tsx
+
+components/social-media-monitoring.tsx
+
+components/widgets/important-articles.tsx

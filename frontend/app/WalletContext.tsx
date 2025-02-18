@@ -7,9 +7,9 @@ declare global {
   interface Window {
     ethereum?: {
       isMetaMask?: boolean;
-      request?: (request: { method: string; params?: any[] }) => Promise<any>;
+      request?: <T = any>(request: { method: string; params?: unknown[] }) => Promise<T>;
       enable?: () => Promise<string[]>;
-    }
+    };
   }
 }
 

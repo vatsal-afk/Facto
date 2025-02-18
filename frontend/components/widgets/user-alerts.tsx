@@ -4,19 +4,35 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 
+// Define interfaces for type safety
+interface NewsArticle {
+  title: string;
+  url: string;
+  publishedAt: string;
+  source: {
+    name: string;
+  };
+}
+
+interface NewsApiResponse {
+  status: string;
+  articles?: NewsArticle[];
+  message?: string;
+}
+
 // Define the event keywords, focusing on India and elections, especially in Maharashtra
 const EVENT_KEYWORDS = ["India", "election", "Maharashtra", "2024", "polls"];
 
-const fetchLiveContent = async (keywords: string[]) => {
-  const apiKey = process.env.NEXT_PUBLIC_NEWS_API_KEY; // Ensure your NewsAPI key is set
-  const query = keywords.join('+'); // Combine keywords for the query
+const fetchLiveContent = async (keywords: string[]): Promise<NewsArticle[]> => {
+  const apiKey = process.env.NEXT_PUBLIC_NEWS_API_KEY;
+  const query = keywords.join('+');
   const url = `https://newsapi.org/v2/everything?q=${query}&apiKey=${apiKey}&language=en&sortBy=publishedAt&pageSize=5`;
 
   try {
     const response = await fetch(url);
-    const data = await response.json();
+    const data: NewsApiResponse = await response.json();
 
-    console.log("Fetched data:", data); // Log the API response for debugging
+    console.log("Fetched data:", data);
 
     if (data.status !== "ok") {
       console.error("Error fetching data:", data.message);
@@ -31,18 +47,23 @@ const fetchLiveContent = async (keywords: string[]) => {
 };
 
 export default function LiveEventAnalysis() {
-  const [liveData, setLiveData] = useState<any[]>([]);
+  const [liveData, setLiveData] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const newData = await fetchLiveContent(EVENT_KEYWORDS); // Fetch data once based on event keywords
-      setLiveData(newData); // Update state with the fetched data
-      setLoading(false);
+      try {
+        const newData = await fetchLiveContent(EVENT_KEYWORDS);
+        setLiveData(newData);
+      } catch (error) {
+        console.error("Error in fetchData:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchData(); // Fetch once when component mounts
+    fetchData();
   }, []);
 
   return (
@@ -59,7 +80,7 @@ export default function LiveEventAnalysis() {
               <p className="text-center text-gray-600 dark:text-gray-300">No new articles available.</p>
             ) : (
               liveData.map((article, index) => (
-                <li key={index}>
+                <li key={`${article.title}-${index}`}>
                   <div className="flex items-center justify-between">
                     <div className="text-gray-600 dark:text-gray-300">{article.title}</div>
                     <a
