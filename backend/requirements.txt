@@ -19,3 +19,4 @@ tokenizers
 torch
 faiss-cpu
 numpy
+pymongo
