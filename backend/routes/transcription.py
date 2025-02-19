@@ -7,8 +7,8 @@ from sentence_transformers import SentenceTransformer, util
 import numpy as np
 import faiss
 import re
-from db_config import MongoDBConnection
-from db_operations import TranscriptionOperations
+from routes.db_config import MongoDBConnection
+from routes.db_operations import TranscriptionOperations
 
 transcription_bp = Blueprint("transcription", __name__)
 
