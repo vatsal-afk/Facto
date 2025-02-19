@@ -1,4 +1,6 @@
 from flask import Flask
+from flask_cors import CORS
+
 from routes.bills import bills_bp
 from routes.knowledge_graphs import graphs_bp
 from routes.social_media import social_bp
@@ -8,6 +10,7 @@ from routes.transcription import transcription_bp
 import os
 
 app = Flask(__name__)
+CORS(app)  # Allow all origins (or specify allowed origins)
 
 app.config['KNOWLEDGE_GRAPH_DIR'] = 'static/knowledge_graphs'
 
@@ -25,5 +28,5 @@ app.register_blueprint(transcription_bp, url_prefix="/transcribe")
 #     db_connection.close_connection()
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 8000))  # Read PORT from environment variable
+    port = int(os.environ.get("PORT", 8000))  # Read PORT from environment variable
     app.run(host='0.0.0.0', port=port)
