@@ -25,4 +25,5 @@ app.register_blueprint(transcription_bp, url_prefix="/transcribe")
 #     db_connection.close_connection()
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    port = int(os.getenv("PORT", 8000))  # Read PORT from environment variable
+    app.run(host='0.0.0.0', port=port)
