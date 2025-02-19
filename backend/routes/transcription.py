@@ -33,6 +33,7 @@ article_store = []
 article_embeddings = []
 
 # Routes start here
+
 @transcription_bp.route("/transcribe", methods=["POST"])
 def transcribe():
     data = request.json
@@ -46,53 +47,75 @@ def transcribe():
     os.makedirs(audio_dir, exist_ok=True)
     os.makedirs(transcription_dir, exist_ok=True)
 
-    # Run the bash script to process the video URL
-    command = f'bash process_audio.sh "{video_url}" "{audio_dir}"'
-    process = subprocess.run(command, shell=True, text=True, capture_output=True)
+    # Download & segment audio directly in Python
+    yt_command = [
+        "yt-dlp", "-f", "bestaudio[ext=m4a]", "--live-from-start", 
+        "-o", "-", video_url
+    ]
+    ffmpeg_command = [
+        "ffmpeg", "-i", "pipe:0", "-f", "segment", "-segment_time", "30", 
+        "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", "-reset_timestamps", "1",
+        os.path.join(audio_dir, "audio_%03d.wav")
+    ]
 
-    if process.returncode != 0:
-        return jsonify({"error": f"Audio processing failed: {process.stderr}"}), 500
+    try:
+        yt_process = subprocess.Popen(yt_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        ffmpeg_process = subprocess.run(ffmpeg_command, stdin=yt_process.stdout, stderr=subprocess.PIPE, text=True)
+        yt_process.stdout.close()
+        yt_process.wait()
 
-    # Transcribe the processed audio file using Whisper
-    audio_file_path = os.path.join(audio_dir, "output_audio.aac")
-    transcription_file = os.path.join(transcription_dir, "transcription.txt")
-    whisper_command = f'whisper "{audio_file_path}" --model base --output_format txt --output_dir "{transcription_dir}"'
-    
-    whisper_process = subprocess.run(whisper_command, shell=True, text=True, capture_output=True)
+        if ffmpeg_process.returncode != 0:
+            return jsonify({"error": f"Audio processing failed: {ffmpeg_process.stderr}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"Audio processing error: {str(e)}"}), 500
 
-    if whisper_process.returncode != 0:
-        return jsonify({"error": f"Transcription failed: {whisper_process.stderr}"}), 500
+    # Transcribe each audio segment using Whisper
+    transcriptions = []
+    for filename in sorted(os.listdir(audio_dir)):
+        if filename.endswith(".wav"):
+            audio_file_path = os.path.join(audio_dir, filename)
+            transcription_file = os.path.join(transcription_dir, f"{filename}.txt")
 
-    # Wait for the transcription file to be created
-    for _ in range(10):  # Wait up to 5 seconds
-        if os.path.exists(transcription_file):
-            with open(transcription_file, "r", encoding="utf-8") as f:
-                transcription = f.read().strip()
-            
-            # Process the transcription immediately
-            try:
-                summary = summarize_text(transcription)
-                chunks = split_text_into_chunks(summary, max_chunk_length=150)
-                generated_contents = []
-                for chunk in chunks:
-                    chunk_text = tokenizer.decode(chunk, skip_special_tokens=True)
-                    generated_content = generate_news_content(chunk_text)
-                    generated_contents.append(generated_content)
-                
-                generated_contents1 = generated_contents[0].split('\n')
-                results = process_news_list(generated_contents1)
-                
-                return jsonify({
-                    "message": "Transcription and analysis completed",
-                    "transcriptionUrl": f"/transcription/transcription.txt",
-                    "analysis": results
-                }), 200
-            except Exception as e:
-                return jsonify({"error": f"Analysis failed: {str(e)}"}), 500
-        
-        time.sleep(0.5)
+            whisper_command = [
+                "whisper", audio_file_path, "--model", "base", 
+                "--output_format", "txt", "--output_dir", transcription_dir
+            ]
+            whisper_process = subprocess.run(whisper_command, text=True, capture_output=True)
 
-    return jsonify({"error": "Transcription file not found"}), 500
+            if whisper_process.returncode != 0:
+                return jsonify({"error": f"Transcription failed for {filename}: {whisper_process.stderr}"}), 500
+
+            # Wait for file creation
+            for _ in range(10):
+                if os.path.exists(transcription_file):
+                    with open(transcription_file, "r", encoding="utf-8") as f:
+                        transcriptions.append(f.read().strip())
+                    break
+                time.sleep(0.5)
+
+    if not transcriptions:
+        return jsonify({"error": "No transcriptions were generated"}), 500
+
+    full_transcription = "\n".join(transcriptions)
+
+    # Process the transcription
+    try:
+        summary = summarize_text(full_transcription)
+        chunks = split_text_into_chunks(summary, max_chunk_length=150)
+        generated_contents = [
+            generate_news_content(tokenizer.decode(chunk, skip_special_tokens=True)) for chunk in chunks
+        ]
+
+        generated_contents1 = generated_contents[0].split("\n")
+        results = process_news_list(generated_contents1)
+
+        return jsonify({
+            "message": "Transcription and analysis completed",
+            "transcription": full_transcription,
+            "analysis": results
+        }), 200
+    except Exception as e:
+        return jsonify({"error": f"Analysis failed: {str(e)}"}), 500
 
 # Step 2: Define Preprocessing Function to Clean Conversational Text
 def clean_conversational_text(text):

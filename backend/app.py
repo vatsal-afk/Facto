@@ -4,6 +4,8 @@ from routes.knowledge_graphs import graphs_bp
 from routes.social_media import social_bp
 from routes.transcription import transcription_bp
 
+import os
+
 app = Flask(__name__)
 
 app.config['KNOWLEDGE_GRAPH_DIR'] = 'static/knowledge_graphs'
@@ -15,7 +17,11 @@ app.register_blueprint(transcription_bp, url_prefix="/transcribe")
 
 @app.teardown_appcontext
 def cleanup(exception=None):
-    db_connection.close_connection()
+    try:
+        db_connection.close_connection()  # Ensure this exists
+    except NameError:
+        pass  # Avoid errors if db_connection isn't defined
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8000)
+    port = int(os.getenv("PORT", 8000))
+    app.run(host="0.0.0.0", port=port)
