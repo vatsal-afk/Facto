@@ -14,14 +14,17 @@ export default function RegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
+    // setLoading(true);
   
     if (!role || !email || !password) {
       setError("All fields are necessary.");
+      // setLoading(false);
       return;
     }
 
     try {
-      const resUserExists = await fetch("api/userExists", {
+      const resUserExists = await fetch("/api/userExists", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -29,14 +32,26 @@ export default function RegisterForm() {
         body: JSON.stringify({ email }),
       });
 
-      const { user } = await resUserExists.json();
+      if (!resUserExists.ok) {
+        throw new Error(`Server error: ${resUserExists.status}`);
+      }
 
-      if (user) {
-        setError("User already exists.");
+      const data = await resUserExists.json();
+
+      if (!data.success) {
+        setError(data.error || "Error checking user existence");
+        // setLoading(false);
         return;
       }
 
-      const res = await fetch("api/register", {
+      if (data.user) {
+        setError("User already exists.");
+        // setLoading(false);
+        return;
+      }
+
+      // Continue with registration...
+      const res = await fetch("/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,17 +63,27 @@ export default function RegisterForm() {
         }),
       }); 
 
-      if (res.ok) {
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Registration failed");
+      }
+
+      const result = await res.json();
+      
+      if (result.success) {
         const form = e.target as HTMLFormElement;
         form.reset();
         router.push("/signin");
       } else {
-        console.log("User registration failed.");
+        setError(result.error || "Registration failed");
       }
     } catch (error) {
-      console.log("Error during registration: ", error);
+      console.error("Error during registration: ", error);
+      setError(error instanceof Error ? error.message : "Registration failed");
+    } finally {
+      // setLoading(false);
     }
-  };
+};
 
   return (
     <div className="grid place-items-center h-screen">

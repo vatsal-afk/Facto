@@ -105,7 +105,7 @@ def transcribe():
         generated_contents = [
             generate_news_content(tokenizer.decode(chunk, skip_special_tokens=True)) for chunk in chunks
         ]
-
+        
         generated_contents1 = generated_contents[0].split("\n")
         results = process_news_list(generated_contents1)
 

@@ -8,6 +8,8 @@ services :
       - "5000:5000"
     env_file:
       - backend/.env
+    networks:
+      - app-network
     
   frontend:
     build: ./frontend
@@ -18,9 +20,21 @@ services :
       - backend
     env_file:
       - frontend/.env
+    environment:
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXT_BACKEND_URL=http://localhost:5000
+      - NODE_ENV=development
+      - MONGODB_URI="mongodb+srv://tanmaysdream9460:1NPHNJn3RyzR63dP@cluster0.ftmk1.mongodb.net/facto"
+      - NEXTAUTH_SECRET="do_not_fall_in_trap"
+    
     volumes:
       - ./frontend:/app
       - /app/node_modules
     command: ["npm", "run", "dev"]
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
 
     

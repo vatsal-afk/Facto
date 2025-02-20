@@ -6,15 +6,32 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'media.guim.co.uk',
-        pathname: '/**', // Allows all paths under this hostname
+        pathname: '/**',
       },
     ],
   },
   eslint: {
-    ignoreDuringBuilds: true,  // Ignore ESLint errors
+    ignoreDuringBuilds: true,
   },
   typescript: {
-    ignoreBuildErrors: true,  // Ignore TypeScript errors
+    ignoreBuildErrors: true,
+  },
+  // Add these configurations
+  experimental: {
+    appDir: true,
+  },
+  webpack: (config) => {
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false,
+    };
+    return config;
+  },
+  // Add this to handle potential path issues
+  async redirects() {
+    return [];
   },
 };
 

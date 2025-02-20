@@ -1,5 +1,5 @@
 import { Inter } from 'next/font/google'
-import { getServerSession } from "next-auth";
+// import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Providers from "./providers"
 import './globals.css'
@@ -18,7 +18,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const session = await getServerSession(authOptions);
+  // const session = await getServerSession(authOptions);
 
   return (
     <html lang="en" suppressHydrationWarning>
