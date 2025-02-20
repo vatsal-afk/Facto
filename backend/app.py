@@ -10,7 +10,7 @@ from routes.transcription import transcription_bp
 import os
 
 app = Flask(__name__)
-CORS(app)  # Allow all origins (or specify allowed origins)
+CORS(app)
 
 app.config['KNOWLEDGE_GRAPH_DIR'] = 'static/knowledge_graphs'
 

@@ -20,3 +20,4 @@ torch
 faiss-cpu
 numpy
 pymongo
+cors
