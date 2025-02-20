@@ -4,7 +4,7 @@
 
 ---
 
-![App Screenshot](app_screenshots/image1.png)
+![App Screenshot](app_screenshots/Dashboard.png)
 
 ## Project Setup
 
@@ -19,7 +19,11 @@ Ensure that you have the following software installed before setting up the proj
 
 - This project uses shadcn/ui components. If you need to add more components, you can do so using the following command:
 
-``npx shadcn@latest add [component-name]``
+```
+npm install -g shadcn
+shadcn init
+shadcn add --all --dir u
+```
 
 ### Steps to Set Up the Project
 
@@ -60,10 +64,6 @@ To configure the project, create a `.env` file in the root directory with
 4. [Voting for Verified Users](#how-to-become-a-verified-user)
 5. [Discussion Forum for General Users](#how-to-join-the-discussion)
 6. [Trending News and Social Media Insights](#webscraping-the-recent-news)
-
-## How to Become a Verified User?
-
-To improve the reliability and credibility of the platform, users can become **verified** based on their contributions, such as sharing news insights or engaging in discussions. This feature is designed for professionals or individuals who actively contribute to the platform’s goals.
 
 ### How to Become a Verified User ✅
 
@@ -158,7 +158,7 @@ This model verifies the authenticity of news by comparing custom inputs to trust
 
 This repository contains a **Live News Verification Model** that processes YouTube videos to verify the authenticity of news. The model extracts audio, transcribes it, and analyzes the content in smaller, meaningful chunks to ensure accurate evaluation.
 
-![App Screenshot](app_screenshots/image5.png)
+![App Screenshot](app_screenshots/LIve_broadcast.png)
 
 ---
 
@@ -248,3 +248,6 @@ sequenceDiagram
 ### Thank You!
 
 Developed by Vatsal, Vishesh, Tanmay and Aman 🚀
+================================================
+
+Developed by Cybr_Rakshak 🚀
