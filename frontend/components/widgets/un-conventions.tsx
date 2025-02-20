@@ -12,7 +12,7 @@ const UNConventions: React.FC = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch("http://localhost:5000/get_un_news"); // Adjust URL as needed
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/bills/get_un_news`); // Adjust URL as needed
         if (!response.ok) {
           throw new Error("Failed to fetch UN news.");
         }

@@ -17,7 +17,7 @@ export default function DashboardCard() {
     console.log('Sending to server:', requestBody)
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/verify_news', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/graph/verify_news`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ export default function DashboardCard() {
     const requestBody = { url: link }
 
     try{
-      const response=await fetch("http://127.0.0.1:8000/scrape",{
+      const response=await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/graph/scrape`,{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

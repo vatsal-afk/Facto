@@ -10,7 +10,7 @@ const UNNews: React.FC = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/get_un_news`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/bills/get_un_news`);
         if (!response.ok) {
           throw new Error("Failed to fetch news.");
         }

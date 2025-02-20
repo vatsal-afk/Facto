@@ -12,7 +12,7 @@ const LokSabhaBills: React.FC = () => {
   useEffect(() => {
     const fetchBills = async () => {
       try {
-        const response = await fetch("http://localhost:5000/get_bills"); // Adjust URL as necessary
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/bills/get_bills`);
         if (!response.ok) {
           throw new Error("Failed to fetch bills data.");
         }
