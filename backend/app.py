@@ -25,5 +25,6 @@ app.register_blueprint(social_bp, url_prefix="/social")
 #     db_connection.close_connection()
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8000))  # Read PORT from environment variable
-    app.run(host='0.0.0.0', port=port)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
+
