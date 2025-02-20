@@ -12,9 +12,6 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-app.config['KNOWLEDGE_GRAPH_DIR'] = 'static/knowledge_graphs'
-
-
 @app.route('/')
 def home():
     return "Hello World"

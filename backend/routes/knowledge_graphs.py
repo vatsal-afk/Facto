@@ -12,10 +12,13 @@ import matplotlib.pyplot as plt
 from dotenv import load_dotenv
 from textstat import flesch_reading_ease
 from bs4 import BeautifulSoup
+import base64
+from io import BytesIO
 
 load_dotenv()
 GUARDIAN_API_KEY = os.getenv('GUARDIAN_API_KEY')
 NEWS_API_KEY = os.getenv('NEWS_API_KEY')
+IMGBB_API_KEY = os.getenv('IMGBB_API_KEY')
 
 graphs_bp = Blueprint('graphs', __name__)
 
@@ -71,16 +74,31 @@ def create_knowledge_graph(summary):
     nx.draw(graph, pos, with_labels=True, node_size=3000, node_color="lightblue", font_size=10, font_weight="bold")
     plt.title("Knowledge Graph - Noun Nodes Only")
 
-    knowledge_graph_dir = current_app.config['KNOWLEDGE_GRAPH_DIR']
-    if not os.path.exists(knowledge_graph_dir):
-        os.makedirs(knowledge_graph_dir)
-
-    filename = f"knowledge_graph_{int(time.time())}.png"
-    filepath = os.path.join(knowledge_graph_dir, filename)
-    plt.savefig(filepath, format="PNG")
+    
+    # Save the plot to a BytesIO object instead of a file
+    img_buffer = BytesIO()
+    plt.savefig(img_buffer, format="PNG")
+    img_buffer.seek(0)
     plt.close()
 
-    return list(connected_nodes), filename
+    # Encode the image as base64
+    img_str = base64.b64encode(img_buffer.getvalue()).decode()
+
+    # Upload the image to ImgBB
+    url = "https://api.imgbb.com/1/upload"
+    payload = {
+        "key": IMGBB_API_KEY,
+        "image": img_str,
+        "name": f"knowledge_graph_{int(time.time())}.png"
+    }
+    response = requests.post(url, payload)
+    
+    if response.status_code == 200:
+        image_url = response.json()['data']['url']
+    else:
+        image_url = "Error uploading image"
+
+    return list(connected_nodes), image_url
 
 def fetch_related_content(query):
     search_url_guardian = "https://content.guardianapis.com/search"
@@ -188,8 +206,7 @@ def verify_news():
                 max_similarity = similarity
                 best_article = article
         
-        connected_nodes, graph_filename = create_knowledge_graph(best_article)
-        graph_url = url_for('static', filename=f'knowledge_graphs/{graph_filename}', _external=True)
+        connected_nodes, graph_url = create_knowledge_graph(best_article)
         
         scores = calculate_scores(news_text, best_article)
         verdict = get_verdict(max_similarity)

@@ -157,7 +157,7 @@ export default function LiveBroadcastAnalysis() {
     try {
       console.log("Sending video URL to backend:", draggedVideo.url)
   
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}transcribe/transcribe`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/transcribe/transcribe`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
