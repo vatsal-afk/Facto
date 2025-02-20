@@ -1,11 +1,12 @@
-from flask import Blueprint, jsonify, request
+from fastapi import APIRouter, Query
+from fastapi.responses import JSONResponse
 import praw
 import logging
 from pytrends.request import TrendReq
 from dotenv import load_dotenv
 import os
 
-social_bp = Blueprint('social', __name__)
+social_router = APIRouter()
 
 load_dotenv()
 
@@ -20,14 +21,13 @@ reddit = praw.Reddit(
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-@social_bp.route('/trending-topics-by-reddit', methods=['GET'])
-def get_trending_topics():
-    country = request.args.get('country', "india").lower()
+@social_router.get('/trending-topics-by-reddit')
+async def get_trending_topics(country: str = Query("india", description="Country to fetch trends for")):
     try:
         pytrends = TrendReq(hl='en-US', tz=360)
         trending_searches = pytrends.trending_searches(pn=country)
         top_3_trends = trending_searches.head(3)[0].tolist()
-        logging.info("Top 3 trending topics in {} are: {}".format(country, top_3_trends))
+        logging.info(f"Top 3 trending topics in {country} are: {top_3_trends}")
 
         results = {}
         for topic in top_3_trends:
@@ -42,11 +42,11 @@ def get_trending_topics():
                 subreddit_posts.append(post_data)
             results[topic] = subreddit_posts
 
-        return jsonify({"country": country, "top_trends": top_3_trends, "reddit_posts": results})
+        return JSONResponse(content={"country": country, "top_trends": top_3_trends, "reddit_posts": results})
 
     except Exception as e:
         logging.error(f"Error fetching trends: {e}")
-        return jsonify({"error": str(e)}), 500
+        return JSONResponse(content={"error": str(e)}, status_code=500)
 
 def get_thumbnail(submission):
     if hasattr(submission, 'media') and submission.media:

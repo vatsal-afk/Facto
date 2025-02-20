@@ -1,7 +1,7 @@
 import feedparser
 import json
-from flask import Blueprint, jsonify
-from flask_cors import CORS
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -9,19 +9,18 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 import requests
 
-bills_bp = Blueprint("bills", __name__)
-CORS(bills_bp)
+bills_router = APIRouter()
 
 RSS_URL = "https://news.un.org/feed/subscribe/en/news/all/rss.xml"
 
-@bills_bp.route('/get_un_news', methods=['GET'])
-def get_un_news():
+@bills_router.get("/get_un_news")
+async def get_un_news():
     try:
         feed = feedparser.parse(RSS_URL)
         news_entries = [{"Title": entry.title, "Link": entry.link, "Published": entry.published, "Summary": entry.summary} for entry in feed.entries]
-        return jsonify({"news_entries": news_entries})
+        return JSONResponse(content={"news_entries": news_entries})
     except Exception as e:
-        return jsonify({"error": f"Failed to fetch UN news: {str(e)}"}), 500
+        return JSONResponse(content={"error": f"Failed to fetch UN news: {str(e)}"}, status_code=500)
 
 
 def extract_content(url):
@@ -42,8 +41,8 @@ def extract_content(url):
         return f"Error fetching content: {str(e)}"
 
 
-@bills_bp.route('/get_bills', methods=['GET'])
-def get_bills():
+@bills_router.get("/get_bills")
+async def get_bills():
     try:
         chrome_options = Options()
         chrome_options.add_argument("--headless")
@@ -78,7 +77,7 @@ def get_bills():
                 "summary": content
             })
 
-        return jsonify({"bills": bills})
+        return JSONResponse(content={"bills": bills})
 
     except Exception as e:
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+        return JSONResponse(content={"error": f"An error occurred: {str(e)}"}, status_code=500)

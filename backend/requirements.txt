@@ -20,3 +20,5 @@ torch
 faiss-cpu
 numpy
 cors
+uvicorn
+fastapi
