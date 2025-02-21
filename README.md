@@ -23,33 +23,33 @@ Ensure that you have the following software installed before setting up the proj
 
 1. **Clone the repository**:
 ```bash
-   git clone https://github.com/vatsal-afk/facto.git
-   ```
+git clone https://github.com/vatsal-afk/facto.git
+```
 2.  **Set up the Backend**:
 
 For UNIX (Mac/Linux) Users:
 ```bash
-    python3 -m venv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
-    chmod +x run_backend.sh
-    ./run_backend.sh
-   ```
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+chmod +x run_backend.sh
+./run_backend.sh
+```
 For Windows Users (PowerShell)
 ```bash
-    python -m venv venv
-    venv\Scripts\Activate
-    pip install -r requirements.txt
-    Set-ExecutionPolicy Unrestricted -Scope Process
-    ./run_backend.ps1
-   ``` 
+python -m venv venv
+venv\Scripts\Activate
+pip install -r requirements.txt
+Set-ExecutionPolicy Unrestricted -Scope Process
+./run_backend.ps1
+``` 
 3.  **Set up the Frontend**:
 Navigate to the `@/frontend` directory:
 ```bash
-   cd ../frontend
-   npm install
-   npm run dev
-   ``` 
+cd ../frontend
+npm install
+npm run dev
+``` 
        
 ## Configuration
 
