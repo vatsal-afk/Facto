@@ -28,5 +28,6 @@ app.include_router(graphs_router, prefix="/graph")
 app.include_router(social_router, prefix="/social")
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))  # Default Render port is 10000
+    port = int(os.getenv("PORT", 10000))  # Use os.getenv instead of os.environ.get
     uvicorn.run(app, host="0.0.0.0", port=port)
+
