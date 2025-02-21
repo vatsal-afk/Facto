@@ -10,4 +10,6 @@ COPY . .
 
 RUN python -m spacy download en_core_web_sm
 
-CMD ["sh", "-c", "uvicorn app:app --host 0.0.0.0 --port ${PORT:-10000}"]
+EXPOSE 8000
+
+CMD exec uvicorn app:app --host 0.0.0.0 --port ${PORT:-8000}
