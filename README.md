@@ -16,22 +16,14 @@ Ensure that you have the following software installed before setting up the proj
 
 - **Node.js** (v14 or later)
 - **npm** (v6 or later)
-
-#### Additional Notes
-
-- This project uses shadcn/ui components. If you need to add more components, you can do so using the following command:
-
-```
-npm install -g shadcn
-shadcn init
-shadcn add --all --dir ui
-```
+- **python**
+- **pip**
 
 ### Steps to Set Up the Project
 
 1. **Clone the repository**:
 ```bash
-   git clone https://github.com/your-username/facto.git
+   git clone https://github.com/vatsal-afk/facto.git
    ```
 2.  **Set up the Backend**:
 Navigate to the `@/streaming` :
