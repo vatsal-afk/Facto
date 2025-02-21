@@ -54,6 +54,7 @@ Navigate to the `@/frontend` directory:
 ## Configuration
 
 To configure the project, create a `.env` file in the root directory with
+(feel free to mail the developers for the environment variables)
 
 ```
 GUARDIAN_API_KEY = ""
