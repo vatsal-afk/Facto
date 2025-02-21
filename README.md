@@ -26,14 +26,27 @@ Ensure that you have the following software installed before setting up the proj
    git clone https://github.com/vatsal-afk/facto.git
    ```
 2.  **Set up the Backend**:
-Navigate to the `@/streaming` :
+
+For UNIX (Mac/Linux) Users:
 ```bash
-   chmod +x run_backend.sh
-   ./run_backend.sh
+    python3 -m venv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
+    chmod +x run_backend.sh
+    ./run_backend.sh
+   ```
+For Windows Users (PowerShell)
+```bash
+    python -m venv venv
+    venv\Scripts\Activate
+    pip install -r requirements.txt
+    Set-ExecutionPolicy Unrestricted -Scope Process
+    ./run_backend.ps1
    ``` 
 3.  **Set up the Frontend**:
 Navigate to the `@/frontend` directory:
 ```bash
+   cd ../frontend
    npm install
    npm run dev
    ``` 
@@ -42,17 +55,22 @@ Navigate to the `@/frontend` directory:
 
 To configure the project, create a `.env` file in the root directory with
 
-`NEXT_PUBLIC_GUARDIAN_API_KEY=your_guardian_api_key
-NEXT_PUBLIC_YOUTUBE_API_KEY=your_youtube_api_key
-NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS=your_contract_address
-NEXT_PUBLIC_GOOGLE_API_KEY=your_google_api_key
-NEXT_PUBLIC_NEWS_API_KEY=your_news_api_key
-MONGODB_URI=your_mongodb_connection_uri
-NEXTAUTH_SECRET=your_nextauth_secret
-NEXTAUTH_URL=http://localhost:3000
-NEXT_PUBLIC_GOOGLE_CUSTOM_SEARCH_ENGINE_ID=your_custom_search_engine_id
-REDDIT_CLIENT_ID=your_reddit_client_id
-REDDIT_CLIENT_SECRET=your_reddit_api_secret`
+```
+GUARDIAN_API_KEY = ""
+NEWS_API_KEY = ""
+REDDIT_CLIENT_ID = ''
+REDDIT_CLIENT_SECRET = ""
+
+NEXT_PUBLIC_GUARDIAN_API_KEY = ""
+NEXT_PUBLIC_YOUTUBE_API_KEY = ""
+NEXT_PUBLIC_DEPLOYED_CONTRACT_ADDRESS = "0xA1d0071641C156d7fd035Fa01169a164EEe3B786"
+NEXT_PUBLIC_GOOGLE_API_KEY = ""
+NEXT_PUBLIC_NEWS_API_KEY = ""
+MONGODB_URI = "mongodb+srv://tanmaysdream9460:1NPHNJn3RyzR63dP@cluster0.ftmk1.mongodb.net/facto"
+NEXTAUTH_SECRET="do_not_fall_in_trap"
+NEXTAUTH_URL="http://localhost:3000"
+NEXT_PUBLIC_GOOGLE_CUSTOM_SEARCH_ENGINE_ID=""
+```
 
 # Features
 1.  [Custom News Input for Verification](#1-fake-news-verification-model)
